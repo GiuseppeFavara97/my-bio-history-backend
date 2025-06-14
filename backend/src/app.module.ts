@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
+import { UserModule } from './users/user.module';
 dotenv.config();
 
 @Module({
@@ -15,8 +16,9 @@ dotenv.config();
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
-      synchronize: false,
+      synchronize: true,
     }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
