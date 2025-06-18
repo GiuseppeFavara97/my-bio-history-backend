@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
 import { UserModule } from './users/user.module';
+import { DiagnosesModule } from './diagnoses/diagnoses.module';
 dotenv.config();
 
 @Module({
@@ -19,6 +20,7 @@ dotenv.config();
       synchronize: true,
     }),
     UserModule,
+    DiagnosesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
