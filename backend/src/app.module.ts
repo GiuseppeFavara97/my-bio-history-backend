@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 import { UserModule } from './users/user.module';
 import { DiagnosesModule } from './diagnoses/diagnoses.module';
 import { CareModule } from './care/care.module';
+import { PathologyModule } from './pathology/pathology.module';
 dotenv.config();
 
 @Module({
@@ -23,6 +24,7 @@ dotenv.config();
     UserModule,
     DiagnosesModule,
     CareModule,
+    PathologyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
