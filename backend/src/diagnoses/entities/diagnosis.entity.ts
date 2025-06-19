@@ -21,25 +21,3 @@ export class Diagnosis {
     @Column({nullable: true})
     description : string;
 }
-
-
-
-/*
-ipotetica classe Medical Record
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Diagnosis } from './diagnoses.entity';
-
-@Entity('medical_records')
-export class MedicalRecord {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  patient_id: number;
-
-  @Column({ type: 'timestamp' })
-  created_at: Date;
-
-  @OneToMany(() => Diagnosis, diagnosis => diagnosis.medicalRecord)
-  diagnoses: Diagnosis[];
-} */

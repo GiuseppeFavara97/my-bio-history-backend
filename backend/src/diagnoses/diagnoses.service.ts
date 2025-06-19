@@ -28,7 +28,7 @@ export class DiagnosesService {
   async findOnediagnosis(id: number): Promise <Diagnosis> {
     const diagnosis = await this.diagnosisRepository.findOne({ where: { id } });
             if (!diagnosis) {
-                throw new NotFoundException(`User with ID ${id} not found`);
+                throw new NotFoundException(`Diagnosis with ID ${id} not found`);
             }
             return diagnosis;
   }
@@ -41,7 +41,7 @@ export class DiagnosesService {
   async removediagnosis(id: number):Promise <void> {
     const darimuovere = await this.diagnosisRepository.delete(id);
     if (darimuovere.affected ===0) {
-      throw new NotFoundException (`Utente ID: ${id} Non trovato` );
+      throw new NotFoundException (`Diagnosis ID: ${id} not found` );
     }
   }
 }
