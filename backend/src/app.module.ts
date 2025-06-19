@@ -4,7 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
 import { UserModule } from './users/user.module';
-import {AllergiesModule} from './allergies/allergy.module';
+import { MedicalModule } from './medical_records/medical.module';
+import { AllergiesModule } from './allergies/allergy.module';
 dotenv.config();
 
 @Module({
@@ -19,9 +20,9 @@ dotenv.config();
       autoLoadEntities: true,
       synchronize: true,
     }),
-    UserModule, AllergiesModule
+    UserModule,AllergiesModule,MedicalModule
   ],
-  controllers: [AppController,],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
