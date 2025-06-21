@@ -1,44 +1,43 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCareDto } from './dto/create-care.dto';
-import { UpdateCareDto } from './dto/update-care.dto';
+import { CareDto } from './dto/care.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Care } from './entities/care.entity';
+import { Care } from './care.entity';
 
 @Injectable()
 export class CareService {
-    constructor(
-      @InjectRepository(Care)
-      private CareRepository: Repository<Care>,
-    ){}
+  constructor(
+    @InjectRepository(Care)
+    private careRepository: Repository<Care>,
+  ) { }
   // This service is responsible for managing care entities.
-  async createcare(createCareDto: CreateCareDto): Promise<Care>{
-    const care = this.CareRepository.create(createCareDto);
-    return await this.CareRepository.save(care);
+  async createcare(careDto: CareDto): Promise<Care> {
+    const care = this.careRepository.create(careDto);
+    return await this.careRepository.save(care);
   }
 
-  async findAllcare(): Promise <Care[]> {
-    return await this.CareRepository.find();
+  async findAllcare(): Promise<Care[]> {
+    return await this.careRepository.find();
   }
 
   async findOnecare(id: number) {
-    const care=await  this.CareRepository.findOne({ where: { id}});
-      if (!care) {
-        throw new NotFoundException(`Care with ID ${id} not found`);
-      }
-      return care;
+    const care = await this.careRepository.findOne({ where: { id } });
+    if (!care) {
+      throw new NotFoundException(`Care with ID ${id} not found`);
+    }
+    return care;
   }
 
-  async updatecare(id: number, updateCareDto: UpdateCareDto): Promise<Care>{
-   await this.CareRepository.update(id, updateCareDto);
-   return this.findOnecare(id);
+  async updatecare(id: number, careDto: CareDto): Promise<Care> {
+    await this.careRepository.update(id, careDto);
+    return this.findOnecare(id);
   }
 
-  async removecare(id: number):Promise <void> {
-    const caredarimuovere = await this.CareRepository.delete(id);
-      if (caredarimuovere.affected === 0) {
-        throw new NotFoundException(`Care ID: ${id} not found`);
-        }
+  async removecare(id: number): Promise<void> {
+    const caredarimuovere = await this.careRepository.delete(id);
+    if (caredarimuovere.affected === 0) {
+      throw new NotFoundException(`Care ID: ${id} not found`);
+    }
 
   }
 }

@@ -1,18 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Delete } from '@nestjs/common';
 import { CareService } from './care.service';
-import { CreateCareDto } from './dto/create-care.dto';
-import { UpdateCareDto } from './dto/update-care.dto';
+import { CareDto } from './dto/care.dto';
 
 @Controller('care')
 export class CareController {
-  constructor(private readonly careService: CareService) {}
+  constructor(private readonly careService: CareService) { }
 
-  @Post()
-  create(@Body() createCareDto: CreateCareDto) {
-    return this.careService.createcare(createCareDto);
+  @Post('create')
+  create(@Body() careDto: CareDto) {
+    return this.careService.createcare(careDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.careService.findAllcare();
   }
@@ -22,9 +21,9 @@ export class CareController {
     return this.careService.findOnecare(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCareDto: UpdateCareDto) {
-    return this.careService.updatecare(+id, updateCareDto);
+  @Put(':id')
+  update(@Param('id') id: string, @Body() careDto: CareDto) {
+    return this.careService.updatecare(+id, careDto);
   }
 
   @Delete(':id')
