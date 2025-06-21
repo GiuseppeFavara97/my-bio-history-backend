@@ -9,4 +9,4 @@ import { AllergyController } from './allergy.controller';
     providers: [AllergyService],
     controllers: [AllergyController],
 })
-export class AllergiesModule { }
+export class AllergyModule { }

@@ -3,11 +3,10 @@ import { Controller, Post, Get, Put, Delete, Body, Param } from '@nestjs/common'
 import { AllergyService } from './allergy.service';
 import { Allergy } from './allergy.entity';
 import { AllergyDto } from './dto/allergy.dto';
-import { VoidExpression } from 'typescript';
 
 @Controller('allergies')
 export class AllergyController {
-    constructor(private allergyService: AllergyService) {}
+    constructor(private allergyService: AllergyService) { }
 
     @Post('create')
     async createAllergy(@Body() allergyDto: AllergyDto): Promise<Allergy> {

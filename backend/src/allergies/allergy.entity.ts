@@ -6,32 +6,29 @@ export class Allergy {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({nullable:true})
-    medical_records: number;
+    @Column()
+    medical_recordsID: number;
 
-    @Column({ unique: true })
+    @Column()
     id_patient: number;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     allergen: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     reaction: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     severity: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     note: string;
 
-    @Column({nullable: true})
+    @CreateDateColumn()
     start_date: Date;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     end_date: Date;
-
-   @CreateDateColumn()
-    createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;

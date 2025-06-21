@@ -9,13 +9,13 @@ export class AllergyService {
     constructor(
         @InjectRepository(Allergy)
         private allergyRepository: Repository<Allergy>,
-    ) {}
- 
-    async createAllergy(allergiesDto: AllergyDto): Promise<Allergy> {
-        const allergy = this.allergyRepository.create(allergiesDto);
+    ) { }
+
+    async createAllergy(allergysDto: AllergyDto): Promise<Allergy> {
+        const allergy = this.allergyRepository.create(allergysDto);
         return this.allergyRepository.save(allergy);
     }
-    
+
     async findAllAllergies(): Promise<Allergy[]> {
         return this.allergyRepository.find();
     }
@@ -28,7 +28,7 @@ export class AllergyService {
         return allergy;
     }
 
-    async updateAllergy(id: number, allergyDto:AllergyDto): Promise<Allergy> {
+    async updateAllergy(id: number, allergyDto: AllergyDto): Promise<Allergy> {
         await this.allergyRepository.update(id, allergyDto);
         return this.findAllergyById(id);
     }
