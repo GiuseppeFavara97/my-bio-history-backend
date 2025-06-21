@@ -11,31 +11,31 @@ export class User {
     @Column({ unique: true })
     email: string;
 
-    @Column({nullable: true})
+    @Column()
     password: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     firstName: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     lastName: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     birthday: Date;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     birthday_place: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     province: string;
 
-    @Column({type: 'char', length: 1, nullable: true})
+    @Column({ type: 'char', length: 1, nullable: true })
     sex: 'M' | 'F' | null;
- 
-   @Column({nullable: true})
+
+    @Column({ nullable: true })
     phoneNumber: string;
 
-   @CreateDateColumn()
+    @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
