@@ -5,6 +5,11 @@ import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
 import { UserModule } from './users/user.module';
 import { DoctorsModule } from './doctors/doctors.module';
+import { DiagnosisModule } from './diagnoses/diagnosis.module';
+import { CareModule } from './care/care.module';
+import { PathologyModule } from './pathologies/pathology.module';
+import { AllergyModule } from './allergies/allergy.module';
+import { MedicalModule } from './medical_records/medical.module';
 dotenv.config();
 
 @Module({
@@ -21,8 +26,13 @@ dotenv.config();
     }),
     UserModule,
     DoctorsModule,
+    DiagnosisModule,
+    CareModule,
+    PathologyModule,
+    AllergyModule,
+    MedicalModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

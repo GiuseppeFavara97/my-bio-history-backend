@@ -9,13 +9,13 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
-    ) {}
- 
+    ) { }
+
     async createUser(userDto: UserDto): Promise<User> {
         const user = this.userRepository.create(userDto);
         return this.userRepository.save(user);
     }
-    
+
     async findAllUsers(): Promise<User[]> {
         return this.userRepository.find();
     }
