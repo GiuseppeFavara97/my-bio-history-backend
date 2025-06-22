@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import { CreateDoctorDto } from './dto/create-doctor.dto';
-import { UpdateDoctorDto } from './dto/update-doctor.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { DoctorDto } from './dto/create-doctor.dto';
+import { Doctor } from './doctor.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DoctorsController } from './doctors.controller';
+
 
 @Injectable()
 export class DoctorsService {
-  create(createDoctorDto: CreateDoctorDto) {
-    return 'This action adds a new doctor';
+  constructor(
+    @InjectRepository(Doctor)
+    private doctorRepository: Repository<Doctor>
+  ) { }
+
+
+  async createdoctor(DoctorDto: DoctorDto): Promise<Doctor> {
+    const doctor = this.doctorRepository.create(DoctorDto);
+    return this.doctorRepository.save(doctor);
   }
 
-  findAll() {
-    return `This action returns all doctors`;
+  async findAlldoctors(): Promise<Doctor[]> {
+    return this.doctorRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} doctor`;
+  async findDoctorsById(id: number): Promise<Doctor> {
+    const doctor = await this.doctorRepository.findOne({ where: { id } });
+    if (!doctor) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return doctor;
   }
 
-  update(id: number, updateDoctorDto: UpdateDoctorDto) {
-    return `This action updates a #${id} doctor`;
+  async updateDoctor(id: number, doctorDto: DoctorDto): Promise<Doctor> {
+    await this.doctorRepository.update(id, doctorDto);
+    return this.findDoctorsById(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} doctor`;
+  async removedoctor(id: number): Promise<void> {
+    const result = await this.doctorRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`doctor with ID ${id} not found`);
+    }
   }
 }
