@@ -1,20 +1,20 @@
 
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
-import { DoctorDto } from './dto/create-doctor.dto';
+import { DoctorDto } from './dto/doctor.dto';
 
 
 @Controller('doctors')
 export class DoctorsController {
-  constructor(private readonly doctorsService: DoctorsService) {}
+  constructor(private readonly doctorsService: DoctorsService) { }
 
   @Post('create')
   async createdoctors(@Body() createDoctorDto: DoctorDto) {
-    return this.doctorsService.create(createDoctorDto);
+    return this.doctorsService.createdoctor(createDoctorDto);
   }
 
   @Get('all')
-  async findAllDocotrs()  {
+  async findAllDocotrs() {
     return this.doctorsService.findAlldoctors();
   }
 
@@ -23,7 +23,7 @@ export class DoctorsController {
     return this.doctorsService.findDoctorsById(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateDoctorDto: DoctorDto) {
     return this.doctorsService.updateDoctor(+id, updateDoctorDto);
   }
