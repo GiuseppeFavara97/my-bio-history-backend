@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
 import { UserModule } from './users/user.module';
+import { DoctorsModule } from './doctors/doctors.module';
 import { DiagnosisModule } from './diagnoses/diagnosis.module';
 import { CareModule } from './care/care.module';
 import { PathologyModule } from './pathologies/pathology.module';
@@ -24,12 +25,12 @@ dotenv.config();
       synchronize: true,
     }),
     UserModule,
+    DoctorsModule,
     DiagnosisModule,
     CareModule,
     PathologyModule,
     AllergyModule,
     MedicalModule,
-
   ],
   controllers: [AppController],
   providers: [AppService],
