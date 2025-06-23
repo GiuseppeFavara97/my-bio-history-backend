@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreatePathologyDto } from './dto/create-pathology.dto';
 import { UpdatePathologyDto } from './dto/update-pathology.dto';
 import { Repository } from 'typeorm';
@@ -13,9 +13,23 @@ export class PathologyService {
   ){}
 
   async createpatho(createPathologyDto: CreatePathologyDto):Promise <Pathology> {
+    // Check if a pathology with the same name already exists
+    const {name, id} = createPathologyDto;
+    const check= await this.pathologyRepository.findOne({
+      where: { id },
+    });
+
+    if (check) {
+      throw new BadRequestException('Il campo esiste già')
+    }
+    else {
     const pathology = this.pathologyRepository.create(createPathologyDto)
     return await this.pathologyRepository.save(pathology);
   }
+  }
+
+
+
 
   async findAllpatho():Promise <Pathology[]> {
     return await this.pathologyRepository.find();
