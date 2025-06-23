@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
-@Entity("Doctors")
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+@Entity("doctors")
 export class Doctor {
     @PrimaryGeneratedColumn()
     id: number;
@@ -8,7 +8,7 @@ export class Doctor {
     id_users: number;
 
     @Column()
-    speicalizer: string;
+    specializer: string;
 
     @Column()
     license_number: string;

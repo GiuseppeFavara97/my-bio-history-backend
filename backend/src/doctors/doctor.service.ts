@@ -3,19 +3,18 @@ import { DoctorDto } from './dto/doctor.dto';
 import { Doctor } from './doctor.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DoctorsController } from './doctors.controller';
 
 
 @Injectable()
-export class DoctorsService {
+export class DoctorService {
   constructor(
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>
   ) { }
 
 
-  async createdoctor(DoctorDto: DoctorDto): Promise<Doctor> {
-    const doctor = this.doctorRepository.create(DoctorDto);
+  async createdoctor(doctorDto: DoctorDto): Promise<Doctor> {
+    const doctor = this.doctorRepository.create(doctorDto);
     return this.doctorRepository.save(doctor);
   }
 
@@ -26,7 +25,7 @@ export class DoctorsService {
   async findDoctorsById(id: number): Promise<Doctor> {
     const doctor = await this.doctorRepository.findOne({ where: { id } });
     if (!doctor) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`Doctor with ID ${id} not found`);
     }
     return doctor;
   }
@@ -39,7 +38,7 @@ export class DoctorsService {
   async removedoctor(id: number): Promise<void> {
     const result = await this.doctorRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`doctor with ID ${id} not found`);
+      throw new NotFoundException(`Doctor with ID ${id} not found`);
     }
   }
 }

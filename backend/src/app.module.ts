@@ -4,13 +4,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
 import { UserModule } from './users/user.module';
-import { DoctorsModule } from './doctors/doctors.module';
+import { DoctorModule } from './doctors/doctor.module';
 import { DiagnosisModule } from './diagnoses/diagnosis.module';
 import { CareModule } from './care/care.module';
 import { PathologyModule } from './pathologies/pathology.module';
 import { AllergyModule } from './allergies/allergy.module';
 import { MedicalModule } from './medical_records/medical.module';
-console.log('Loading environment variables from .env file');
 dotenv.config();
 
 @Module({
@@ -26,7 +25,7 @@ dotenv.config();
       synchronize: true,
     }),
     UserModule,
-    DoctorsModule,
+    DoctorModule,
     DiagnosisModule,
     CareModule,
     PathologyModule,
