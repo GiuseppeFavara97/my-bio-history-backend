@@ -14,7 +14,7 @@ export class PathologyService {
 
   async createpatho(createPathologyDto: CreatePathologyDto):Promise <Pathology> {
     // Check if a pathology with the same name already exists
-    const {name, id} = createPathologyDto;
+    const {id} = createPathologyDto;
     const check= await this.pathologyRepository.findOne({
       where: { id },
     });
