@@ -10,6 +10,8 @@ import { CareModule } from './care/care.module';
 import { PathologyModule } from './pathologies/pathology.module';
 import { AllergyModule } from './allergies/allergy.module';
 import { MedicalModule } from './medical_records/medical.module';
+import { Patient } from './patients/patient.entity';
+import { PatientModule } from './patients/patient.module';
 dotenv.config();
 
 @Module({
@@ -31,6 +33,7 @@ dotenv.config();
     PathologyModule,
     AllergyModule,
     MedicalModule,
+    PatientModule
   ],
   controllers: [AppController],
   providers: [AppService],
