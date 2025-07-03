@@ -2,6 +2,7 @@ import { IsString, } from "class-validator";
 
 export class DiagnosisDto {
 
-    @IsString()
-    description: string;
+    description?: string;
+    doctorId?: number;
+    medicalRecordId?: number;
 }
