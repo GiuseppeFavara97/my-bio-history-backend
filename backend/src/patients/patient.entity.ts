@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -17,12 +18,16 @@ import { UploadDocument } from 'src/uploadDocuments/uploadDocument.entity';
 import { MedicalRecord } from 'src/medicalRecords/medical.entity';
 
 
+=======
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+>>>>>>> origin/main
 @Entity("patients")
 export class Patient {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({ nullable: true })
+<<<<<<< HEAD
     mainPatientId: number;
 
     @Column({ nullable: true })
@@ -65,4 +70,14 @@ export class Patient {
     @OneToOne(() => User, (user) => user.patient)
     @JoinColumn({ name: 'user_id' })
     user: User;
+=======
+    id_users: number;
+
+    @Column({ nullable: true })
+    specializer: string;
+
+    @Column({ nullable: true })
+    license_number: string;
+
+>>>>>>> origin/main
 }
