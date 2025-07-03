@@ -55,5 +55,3 @@ export class User {
     @JoinColumn({ name: 'doctor_id' })
     doctor?: Doctor;
 }
-
-
