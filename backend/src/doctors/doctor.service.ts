@@ -13,12 +13,12 @@ export class DoctorService {
   ) { }
 
 
-  async createdoctor(doctorDto: DoctorDto): Promise<Doctor> {
+  async createDoctor(doctorDto: DoctorDto): Promise<Doctor> {
     const doctor = this.doctorRepository.create(doctorDto);
     return this.doctorRepository.save(doctor);
   }
 
-  async findAlldoctors(): Promise<Doctor[]> {
+  async findAllDoctors(): Promise<Doctor[]> {
     return this.doctorRepository.find();
   }
 
@@ -35,7 +35,7 @@ export class DoctorService {
     return this.findDoctorsById(id);
   }
 
-  async removedoctor(id: number): Promise<void> {
+  async removeDoctor(id: number): Promise<void> {
     const result = await this.doctorRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Doctor with ID ${id} not found`);
