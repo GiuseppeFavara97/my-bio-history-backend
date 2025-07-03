@@ -6,10 +6,13 @@ import { UserController } from './user.controller';
 import { DoctorModule } from 'src/doctors/doctor.module';
 import { PatientModule } from 'src/patients/patient.module';
 
+
 @Module({
-    imports: [TypeOrmModule.forFeature([User]),
+    imports: [
+        TypeOrmModule.forFeature([User]),
         DoctorModule,
-        PatientModule],
+        PatientModule
+    ],
     providers: [UserService],
     controllers: [UserController],
     exports: [UserService],
