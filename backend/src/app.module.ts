@@ -3,13 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
-<<<<<<< HEAD
-import { UserModule } from '../users/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
-
-=======
 import { UserModule } from './users/user.module';
 import { DoctorModule } from './doctors/doctor.module';
 import { DiagnosisModule } from './diagnoses/diagnosis.module';
@@ -17,7 +13,8 @@ import { CareModule } from './care/care.module';
 import { PathologyModule } from './pathologies/pathology.module';
 import { AllergyModule } from './allergies/allergy.module';
 import { MedicalModule } from './medical_records/medical.module';
->>>>>>> main
+import { Patient } from './patients/patient.entity';
+import { PatientModule } from './patients/patient.module';
 dotenv.config();
 
 @Module({
@@ -32,16 +29,14 @@ dotenv.config();
       autoLoadEntities: true
     }),
     UserModule,
-<<<<<<< HEAD
     AuthModule,
-=======
     DoctorModule,
     DiagnosisModule,
     CareModule,
     PathologyModule,
     AllergyModule,
     MedicalModule,
->>>>>>> main
+    PatientModule
   ],
   controllers: [AppController,AuthController],
   providers: [AppService],

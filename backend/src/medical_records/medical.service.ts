@@ -18,7 +18,9 @@ export class MedicalService {
     }
     
     async findAllMedical_Records(): Promise<Medical_Records[]> {
-        return this.MedicalRepository.find();
+        return this.MedicalRepository.find({
+            relations: ['diagnoses'],
+        });
     }
 
     async findMedical_RecordsById(id: number): Promise<Medical_Records> {

@@ -18,8 +18,10 @@ export class DiagnosisService {
   }
 
   async findAlldiagnosis(): Promise<Diagnosis[]> {
-
-    return await this.diagnosisRepository.find();
+    return await this.diagnosisRepository.find({
+      relations: ['medicalrecord'],
+    });
+      
   }
 
 
