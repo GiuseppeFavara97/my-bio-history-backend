@@ -9,7 +9,10 @@ import { DiagnosisModule } from './diagnoses/diagnosis.module';
 import { CareModule } from './care/care.module';
 import { PathologyModule } from './pathologies/pathology.module';
 import { AllergyModule } from './allergies/allergy.module';
-import { MedicalModule } from './medical_records/medical.module';
+import { MedicalRecordModule } from './medicalRecords/medical.module';
+import { PatientModule } from './patients/patient.module';
+import { VaccineModule } from './vaccines/vaccine.module';
+import { UploadDocument } from './uploadDocuments/uploadDocument.entity';
 dotenv.config();
 
 @Module({
@@ -30,7 +33,10 @@ dotenv.config();
     CareModule,
     PathologyModule,
     AllergyModule,
-    MedicalModule,
+    MedicalRecordModule,
+    PatientModule,
+    VaccineModule,
+    UploadDocument
   ],
   controllers: [AppController],
   providers: [AppService],
