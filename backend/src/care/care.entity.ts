@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Diagnosis } from "src/diagnoses/diagnosis.entity";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+
 
 @Entity("care")
 export class Care {
@@ -20,4 +22,7 @@ export class Care {
     @Column({ nullable: true })
     daily_frequency: number;
 
+    @ManyToOne(() => Diagnosis, (diagnosis) => diagnosis.care)
+    @JoinColumn({ name: 'diagnosis_id' })
+    diagnosis: Diagnosis;
 }

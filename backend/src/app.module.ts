@@ -3,18 +3,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
-import { AuthModule } from './auth/auth.module';
-import { AuthController } from './auth/auth.controller';
-import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';;
 import { UserModule } from './users/user.module';
 import { DoctorModule } from './doctors/doctor.module';
 import { DiagnosisModule } from './diagnoses/diagnosis.module';
 import { CareModule } from './care/care.module';
 import { PathologyModule } from './pathologies/pathology.module';
 import { AllergyModule } from './allergies/allergy.module';
-import { MedicalModule } from './medical_records/medical.module';
-import { Patient } from './patients/patient.entity';
+import { MedicalRecordModule } from './medicalRecords/medical.module';
 import { PatientModule } from './patients/patient.module';
+import { VaccineModule } from './vaccines/vaccine.module';
+import { UploadDocumentModule } from './uploadDocuments/uploadDocument.module';
+
 dotenv.config();
 
 @Module({
@@ -26,7 +26,8 @@ dotenv.config();
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      autoLoadEntities: true
+      autoLoadEntities: true,
+      synchronize: true,
     }),
     UserModule,
     AuthModule,
@@ -35,10 +36,12 @@ dotenv.config();
     CareModule,
     PathologyModule,
     AllergyModule,
-    MedicalModule,
-    PatientModule
+    MedicalRecordModule,
+    PatientModule,
+    VaccineModule,
+    UploadDocumentModule
   ],
-  controllers: [AppController,AuthController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule { }

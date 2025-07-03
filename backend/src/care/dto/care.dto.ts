@@ -10,5 +10,6 @@ export class CareDto {
     @IsNumber()
     duration_days: number;
     daily_frequency: number;
+    diagnosisId: number;
 
 }

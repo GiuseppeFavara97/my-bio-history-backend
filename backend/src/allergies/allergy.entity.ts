@@ -1,16 +1,12 @@
 
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Patient } from "../patients/patient.entity";
+import { MedicalRecord } from "src/medicalRecords/medical.entity";
 
 @Entity("allergies")
 export class Allergy {
     @PrimaryGeneratedColumn()
     id: number;
-
-    @Column()
-    medical_recordsID: number;
-
-    @Column()
-    id_patient: number;
 
     @Column({ nullable: true })
     allergen: string;
@@ -32,5 +28,13 @@ export class Allergy {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @ManyToOne(() => Patient, (patient) => patient.allergies)
+    @JoinColumn({ name: "patient_id" })
+    patient: Patient;
+
+    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.allergy)
+    @JoinColumn({ name: "medicalRecords_id" })
+    medicalRecords: MedicalRecord;
 
 }
