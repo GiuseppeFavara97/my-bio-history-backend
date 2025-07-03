@@ -11,12 +11,12 @@ export class DoctorController {
 
   @Post('create')
   async createdoctors(@Body() doctorDto: DoctorDto): Promise<Doctor> {
-    return this.doctorService.createdoctor(doctorDto);
+    return this.doctorService.createDoctor(doctorDto);
   }
 
   @Get('all')
   async findAllDocotrs(): Promise<Doctor[]> {
-    return this.doctorService.findAlldoctors();
+    return this.doctorService.findAllDoctors();
   }
 
   @Get(':id')
@@ -31,6 +31,6 @@ export class DoctorController {
 
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
-    return this.doctorService.removedoctor(+id);
+    return this.doctorService.removeDoctor(+id);
   }
 }

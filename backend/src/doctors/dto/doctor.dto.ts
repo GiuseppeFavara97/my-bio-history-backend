@@ -1,12 +1,13 @@
-import { IsEmpty, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
+import { User } from 'src/users/user.entity';
 
 export class DoctorDto {
-    @IsNotEmpty()
-    id_users: number;
 
-    @IsEmpty()
+    user: User
+
+    @IsNotEmpty()
     specializer: string;
 
-    @IsEmpty()
+    @IsNotEmpty()
     license_number: string;
 }
