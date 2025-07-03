@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
+import { AuthModule } from './auth/auth.module';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
 import { UserModule } from './users/user.module';
 import { DoctorModule } from './doctors/doctor.module';
 import { DiagnosisModule } from './diagnoses/diagnosis.module';
@@ -23,10 +26,10 @@ dotenv.config();
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      autoLoadEntities: true,
-      synchronize: true,
+      autoLoadEntities: true
     }),
     UserModule,
+    AuthModule,
     DoctorModule,
     DiagnosisModule,
     CareModule,
@@ -35,7 +38,7 @@ dotenv.config();
     MedicalModule,
     PatientModule
   ],
-  controllers: [AppController],
+  controllers: [AppController,AuthController],
   providers: [AppService],
 })
 export class AppModule { }
