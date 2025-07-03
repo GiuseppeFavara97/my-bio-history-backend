@@ -2,12 +2,8 @@ import { IsString, IsNumber } from "class-validator";
 
 export class PathologyDto {
 
-    @IsString()
-    name: string;
-
-    @IsNumber()
-    type: number;
-
-    @IsString()
-    description: string;
+    name?: string;
+    type?: number;
+    description?: string;
+    diagnosisId: number;
 }
