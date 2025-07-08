@@ -14,8 +14,15 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 const App: React.FC = () => {
   return (
+    <BrowserRouter>
         <>
       <Header />
+       <Navbar />
+           <Routes>
+             <Route path="/" element={<Home />} />
+             <Route path="/about" element={<About />} />
+             <Route path="/contact" element={<Contact />} />
+           </Routes>
       <main>
         <Home />
         <About />
@@ -23,17 +30,7 @@ const App: React.FC = () => {
       </main> 
       <Footer />
     </>
-
-     <BrowserRouter>
-         <div>
-           <Navbar />
-           <Routes>
-             <Route path="/" element={<Home />} />
-             <Route path="/about" element={<About />} />
-             <Route path="/contact" element={<Contact />} />
-           </Routes>
-           {/* Altri contenuti */}
-         </div>
+         
        </BrowserRouter>
   );
 };

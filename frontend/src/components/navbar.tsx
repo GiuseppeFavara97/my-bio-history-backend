@@ -1,6 +1,5 @@
   import React from 'react';
-   
-   import './Navbar.css'; // Importa il foglio di stile (opzionale)
+   import './navbar.css'; // Importa il foglio di stile (opzionale)
 
    const Navbar = () => {
      return (
