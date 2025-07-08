@@ -1,4 +1,4 @@
-  import React from 'react';
+  
    import './navbar.css'; // Importa il foglio di stile (opzionale)
 
    const Navbar = () => {

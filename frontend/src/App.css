@@ -46,9 +46,8 @@
   bottom: 0;
 }
 
-.limage-container {
+.image-container {
   position: relative; /* Contenitore con posizionamento relativo */
   width: 300px; /* Larghezza del contenitore */
   height: 200px; /* Altezza del contenitore */
-  border: 1px solid black; /* Solo per esempio */
 }
