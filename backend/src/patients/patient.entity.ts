@@ -15,6 +15,7 @@ import { Allergy } from 'src/allergies/allergy.entity';
 import { Vaccine } from 'src/vaccines/vaccine.entity';
 import { UploadDocument } from 'src/uploadDocuments/uploadDocument.entity';
 import { MedicalRecord } from 'src/medicalRecords/medical.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity("patients")
 export class Patient {
@@ -33,7 +34,7 @@ export class Patient {
     @Column({ nullable: true })
     address: string;
 
-    @Column({ nullable: true })
+    @Column({ unique: true, nullable: true })
     taxCode: string;
 
     @Column({ nullable: true })
@@ -61,7 +62,7 @@ export class Patient {
     @JoinColumn({ name: 'medicalRecord_id' })
     medicalRecord: MedicalRecord;
 
-    @OneToOne(() => User, (user) => user.patient)
-    @JoinColumn({ name: 'user_id' })
+    @OneToOne(() => User, user => user.patient)
+    @Exclude()
     user: User;
 }
