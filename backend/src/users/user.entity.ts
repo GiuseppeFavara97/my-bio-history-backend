@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Patient } from "../patients/patient.entity";
 import { Doctor } from "src/doctors/doctor.entity";
 import { UserRole } from "./enum/userRole.enum";
+import { UserSex } from "./enum/userSex.enum";
 
 @Entity("users")
 export class User {
@@ -11,26 +12,29 @@ export class User {
     @Column({ unique: true, nullable: true })
     username: string;
 
+    @Column()
+    password: string;
+
     @Column({ unique: true })
     email: string;
 
-    @Column({ nullable: true })
+    @Column()
     firstName: string;
 
-    @Column({ nullable: true })
+    @Column()
     lastName: string;
 
-    @Column({ nullable: true })
+    @Column()
     birthday: Date;
 
-    @Column({ nullable: true })
+    @Column()
     birthdayPlace: string;
 
-    @Column({ nullable: true })
+    @Column()
     province: string;
 
-    @Column({ type: 'char', length: 1, nullable: true })
-    sex: 'M' | 'F' | null;
+    @Column({ type: 'enum', enum: UserSex })
+    sex: UserSex;
 
     @Column({ nullable: true })
     phoneNumber: string;
@@ -38,6 +42,7 @@ export class User {
     @Column({
         type: 'enum',
         enum: UserRole,
+        default: UserRole.PATIENT,
     })
     role: UserRole;
 
@@ -47,11 +52,11 @@ export class User {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @OneToOne(() => Patient, (patient) => patient.user)
+    @OneToOne(() => Patient, patient => patient.user, { cascade: true })
     @JoinColumn({ name: 'patient_id' })
     patient?: Patient;
 
-    @OneToOne(() => Doctor, (doctor) => doctor.user)
+    @OneToOne(() => Doctor, doctor => doctor.user, { cascade: true })
     @JoinColumn({ name: 'doctor_id' })
     doctor?: Doctor;
 }

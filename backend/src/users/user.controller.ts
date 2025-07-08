@@ -2,16 +2,17 @@ import { Controller, Post, Get, Put, Delete, Body, Param } from '@nestjs/common'
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import { UserDto } from './dto/user.dto';
+import { Public } from 'src/auth/auth.decorator';
 
 @Controller('users')
 export class UserController {
     constructor(private userService: UserService) { }
-
+    @Public()
     @Post('create')
     async createUser(@Body() userDto: UserDto): Promise<User> {
         return this.userService.createUser(userDto);
     }
-
+    @Public()
     @Get()
     async findAllUsers(): Promise<User[]> {
         return this.userService.findAllUsers();
@@ -26,7 +27,7 @@ export class UserController {
     async updateUser(@Param('id') id: number, @Body() userDto: UserDto): Promise<User> {
         return this.userService.updateUser(id, userDto);
     }
-
+    @Public()
     @Delete(':id')
     async deleteUser(@Param('id') id: number): Promise<void> {
         return this.userService.deleteUser(id);

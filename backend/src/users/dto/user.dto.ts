@@ -55,10 +55,10 @@ export class UserDto {
     @ValidateNested()
     @Type(() => DoctorDto)
     @IsOptional()
-    doctorData?: DoctorDto;
+    doctor?: DoctorDto;
 
     @ValidateNested()
     @Type(() => PatientDto)
     @IsOptional()
-    patientData?: PatientDto;
+    patient?: PatientDto;
 }
