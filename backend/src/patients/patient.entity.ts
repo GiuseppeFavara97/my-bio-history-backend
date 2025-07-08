@@ -63,6 +63,7 @@ export class Patient {
     medicalRecord: MedicalRecord;
 
     @OneToOne(() => User, user => user.patient)
+    @JoinColumn({ name: 'userId' })
     @Exclude()
     user: User;
 }
