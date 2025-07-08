@@ -3,7 +3,11 @@
     "jsx": "react-jsx", // o "react"
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "src",
+  "paths": {
+    "@/*": ["*"]
+  }
     
 
   }
