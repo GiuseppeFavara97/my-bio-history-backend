@@ -4,9 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import { UserRole } from './enum/userRole.enum';
-import { BadRequestException } from '@nestjs/common/exceptions/bad-request.exception';
+import { MedicalRecordService } from '../medicalRecords/medical.service';
 import { DoctorService } from '../doctors/doctor.service';
 import { PatientService } from '../patients/patient.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -21,10 +22,10 @@ export class UserService {
     ) { }
 
     async createUser(userDto: UserDto): Promise<User> {
-
+        const hashedPassword = await bcrypt.hash(userDto.password, 10);
 
         const user = this.userRepository.create({
-            password: userDto.password,
+            password: hashedPassword,
             email: userDto.email,
             firstName: userDto.firstName,
             lastName: userDto.lastName,
@@ -66,8 +67,8 @@ export class UserService {
         return user;
     }
 
-    async findUsersByEmail(email: string): Promise<User | undefined> {
-        return this.users.find(user => user.email === email);
+    async findUsersByEmail(email: string): Promise<User | null> {
+        return this.userRepository.findOne({ where: { email } });
     }
 
     async updateUser(id: number, userDto: UserDto): Promise<User> {
@@ -80,11 +81,5 @@ export class UserService {
         if (result.affected === 0) {
             throw new NotFoundException(`User with ID ${id} not found`);
         }
-    }
-
-    async findOne(email: string, password: string): Promise<User | undefined> {
-        // logica per trovare l'utente
-        const user = await this.userRepository.findOne({ where: { email } });
-        return user === null ? undefined : user;
     }
 }
