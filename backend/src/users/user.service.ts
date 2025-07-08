@@ -6,10 +6,7 @@ import { UserDto } from './dto/user.dto';
 import { UserRole } from './enum/userRole.enum';
 import { BadRequestException } from '@nestjs/common/exceptions/bad-request.exception';
 import { DoctorService } from '../doctors/doctor.service';
-import { PatientService } from '../patients/patient.service'; // Assuming you have a similar service for patients
-import *as bcrypt from 'bcrypt';
-import { async } from 'rxjs/internal/scheduler/async';
-
+import { PatientService } from '../patients/patient.service';
 
 @Injectable()
 export class UserService {
@@ -24,34 +21,33 @@ export class UserService {
     ) { }
 
     async createUser(userDto: UserDto): Promise<User> {
-        const { role, doctorData, patientData, ...userData } = userDto;
+
 
         const user = this.userRepository.create({
-            ...userData,
-            role,
+            password: userDto.password,
+            email: userDto.email,
+            firstName: userDto.firstName,
+            lastName: userDto.lastName,
+            birthday: userDto.birthday,
+            birthdayPlace: userDto.birthdayPlace,
+            province: userDto.province,
+            sex: userDto.sex,
+            phoneNumber: userDto.phoneNumber,
+            role: userDto.role,
+
         });
 
-        if (role === UserRole.DOCTOR) {
-            if (!doctorData) {
-                throw new BadRequestException('Doctor data is required for role DOCTOR');
-            }
+        if (userDto.role === UserRole.DOCTOR && userDto.doctor) {
 
-            const doctor = await this.doctorService.createDoctor({
-                ...doctorData,
-                user,
-            });
+            const doctor = await this.doctorService.createDoctor(userDto.doctor);
+            doctor.user = user;
             user.doctor = doctor;
         }
 
-        if (role === UserRole.PATIENT) {
-            if (!patientData) {
-                throw new BadRequestException('Patient data is required for role PATIENT');
-            }
+        if (userDto.role === UserRole.PATIENT && userDto.patient) {
 
-            const patient = await this.patientService.createPatient({
-                ...patientData,
-                user,
-            });
+            const patient = await this.patientService.createPatient(userDto.patient);
+            patient.user = user;
             user.patient = patient;
         }
 

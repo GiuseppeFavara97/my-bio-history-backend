@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, ManyToOne,
 import { User } from "../users/user.entity";
 import { Diagnosis } from "src/diagnoses/diagnosis.entity";
 import { MedicalRecord } from "src/medicalRecords/medical.entity";
+import { Exclude } from "class-transformer";
 
 
 
@@ -14,10 +15,10 @@ export class Doctor {
     specializer: string;
 
     @Column()
-    license_number: string;
+    licenseNumber: string;
 
-    @OneToOne(() => User, (user) => user.doctor)
-    @JoinColumn({ name: 'user_id' })
+    @OneToOne(() => User, user => user.doctor)
+    @Exclude()
     user: User;
 
     @OneToMany(() => Diagnosis, (diagnosis) => diagnosis.doctor)

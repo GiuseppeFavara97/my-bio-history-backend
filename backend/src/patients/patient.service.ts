@@ -3,6 +3,7 @@ import { Patient } from './patient.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PatientDto } from './dto/patient.dto';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class PatientService {
@@ -12,7 +13,8 @@ export class PatientService {
   ) { }
   async createPatient(patientDto: PatientDto): Promise<Patient> {
     const patient = this.patientRepository.create(patientDto);
-    return this.patientRepository.save(patientDto);
+    return this.patientRepository.save(patient);
+
   }
   async findAllPatients(): Promise<Patient[]> {
     return this.patientRepository.find();

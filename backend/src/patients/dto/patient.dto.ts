@@ -1,9 +1,6 @@
 import { IsNotEmpty, IsEmpty } from 'class-validator';
-import { User } from 'src/users/user.entity';
 
 export class PatientDto {
-
-    user: User;
 
     @IsEmpty()
     mainPatientId: number;
