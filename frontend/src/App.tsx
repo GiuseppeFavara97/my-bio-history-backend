@@ -1,18 +1,30 @@
+//import logo from './logo.svg'; <img src={logo} className="App-logo" alt="logo" />
+import './App.css';
+
+import React from 'react';
+import Header from './pages/home/header/header';
+import Home from './pages/home/home';
+import About from './pages/home/about/about';
+import Contact from './pages/home/contact/contact';
+import Footer from './pages/home/footer/footer';
 import Navbar from './components/navbar';
-   import React from 'react';
-   import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
    
 
-   //import Home from './components/Home';
-   //import About from './components/About';
-   //import Contact from './components/Contact';
 
+const App: React.FC = () => {
+  return (
+        <>
+      <Header />
+      <main>
+        <Home />
+        <About />
+        <Contact />
+      </main> 
+      <Footer />
+    </>
 
-    
-
-   function App() {
-     return (
-       <BrowserRouter>
+     <BrowserRouter>
          <div>
            <Navbar />
            <Routes>
@@ -23,8 +35,9 @@ import Navbar from './components/navbar';
            {/* Altri contenuti */}
          </div>
        </BrowserRouter>
-     );
-   }
-   
+  );
+};
 
-   export default App;
+
+
+export default App;

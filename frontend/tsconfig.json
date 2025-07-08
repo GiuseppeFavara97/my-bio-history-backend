@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx", // o "react"
+    "moduleResolution": "node",
+    
+
+  }
+}
