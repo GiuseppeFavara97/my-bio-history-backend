@@ -18,6 +18,7 @@ const App: React.FC = () => {
     <BrowserRouter>
         <>
       <Header />
+      <Profile />
        <Navbar />
            <Routes>
              <Route path="/" element={<Home />} />
