@@ -9,7 +9,7 @@ import Footer from './pages/home/footer/footer';
 import Navbar from './components/navbar';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import UserList from './components/userList';
-import Profile from './components/profile';
+// import Profile from './components/profile';
 
 
 
