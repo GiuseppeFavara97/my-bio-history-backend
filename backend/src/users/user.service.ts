@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import { UserRole } from './enum/userRole.enum';
-import { BadRequestException } from '@nestjs/common/exceptions/bad-request.exception';
 import { DoctorService } from '../doctors/doctor.service';
 import { PatientService } from '../patients/patient.service';
+
 
 @Injectable()
 export class UserService {
@@ -14,50 +14,41 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
-
         private doctorService: DoctorService,
         private patientService: PatientService,
 
     ) { }
 
     async createUser(userDto: UserDto): Promise<User> {
-
-
-        const user = this.userRepository.create({
-            password: userDto.password,
-            email: userDto.email,
-            firstName: userDto.firstName,
-            lastName: userDto.lastName,
-            birthday: userDto.birthday,
-            birthdayPlace: userDto.birthdayPlace,
-            province: userDto.province,
-            sex: userDto.sex,
-            phoneNumber: userDto.phoneNumber,
-            role: userDto.role,
-
+        
+       
+    const user = this.userRepository.create({
+            ...userDto,
+            birthday: userDto.birthday ? new Date(userDto.birthday) : undefined,
+            
         });
-
+        const savedUser = await this.userRepository.save(user);
+        
         if (userDto.role === UserRole.DOCTOR && userDto.doctor) {
-
             const doctor = await this.doctorService.createDoctor(userDto.doctor);
-            doctor.user = user;
-            user.doctor = doctor;
+            doctor.user = savedUser;
+            savedUser.doctor = doctor;
         }
 
         if (userDto.role === UserRole.PATIENT && userDto.patient) {
-
-            const patient = await this.patientService.createPatient(userDto.patient);
-            patient.user = user;
-            user.patient = patient;
+  const patient = await this.patientService.createPatient(userDto.patient);
+  patient.user = savedUser;
+  savedUser.patient = patient;
         }
-
-        return this.userRepository.save(user); // In caso di ruoli futuri
+    return this.userRepository.save(savedUser);
     }
+
+  
 
     async findAllUsers(): Promise<User[]> {
         return this.userRepository.find();
     }
-
+    
     async findUserById(id: number): Promise<User> {
         const user = await this.userRepository.findOne({ where: { id } });
         if (!user) {
@@ -88,3 +79,4 @@ export class UserService {
         return user === null ? undefined : user;
     }
 }
+

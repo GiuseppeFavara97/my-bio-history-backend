@@ -57,13 +57,7 @@ export class PatientService {
     }
     return patients;
   }
-  async findPatientsByTaxCode(taxCode: string): Promise<Patient[]> {
-    const patients = await this.patientRepository.find({ where: { taxCode } });
-    if (patients.length === 0) {
-      throw new NotFoundException(`No patients found with tax code ${taxCode}`);
-    }
-    return patients;
-  }
+  
   async findPatientsByRelationToMainPatient(relationToMainPatient: string): Promise<Patient[]> {
     const patients = await this.patientRepository.find({ where: { relationToMainPatient } });
     if (patients.length === 0) {
