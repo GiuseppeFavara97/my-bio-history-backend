@@ -10,11 +10,11 @@ import {
     OneToOne
 } from 'typeorm';
 
-import { User } from 'src/users/user.entity';
-import { Allergy } from 'src/allergies/allergy.entity';
-import { Vaccine } from 'src/vaccines/vaccine.entity';
-import { UploadDocument } from 'src/uploadDocuments/uploadDocument.entity';
-import { MedicalRecord } from 'src/medicalRecords/medical.entity';
+import { User } from '../users/user.entity';
+import { Allergy } from '../allergies/allergy.entity';
+import { Vaccine } from '../vaccines/vaccine.entity';
+import { UploadDocument } from '../uploadDocuments/uploadDocument.entity';
+import { MedicalRecord } from '../medicalRecords/medical.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity("patients")
