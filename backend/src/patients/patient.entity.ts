@@ -34,6 +34,12 @@ export class Patient {
     @Column({ nullable: true })
     address: string;
 
+    @Column()
+    taxCode: string;
+
+    @Column()
+    catastaleCode: string;
+
     @Column({ nullable: true })
     relationToMainPatient: string;
 
