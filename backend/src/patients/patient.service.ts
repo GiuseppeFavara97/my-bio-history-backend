@@ -7,6 +7,7 @@ import { User } from 'src/users/user.entity';
 import {ItalyCities} from '../common/utils/italyCities';
 import { UserSex } from 'src/users/enum/userSex.enum';
 import { UserDto } from 'src/users/dto/user.dto';
+import { Comune } from 'codice-fiscale-js/types/comune';
 
 
 
@@ -43,7 +44,7 @@ export class PatientService {
   }
 
   generateTaxCode(dto:UserDto): string | void {
-    const { firstName, lastName, province, birthday, birthdayPlace, sex} = dto;
+    const { firstName, lastName, birthday, birthdayPlace, sex} = dto;
     const vowels = 'AEIOU';
     const consonants = 'BCDFGHJKLMNPQRSTVWXYZ';
     const clean = (s: string) => s.toUpperCase().replace(/[^A-Z]/g, '');
@@ -78,6 +79,7 @@ function estraiCodiceDaNome(firstName: string): string {
             vocalifirstName.push(lettera);
         } else {
             consonanti.push(lettera);
+           
         }
     }
 
@@ -99,50 +101,14 @@ function estraiCodiceDaNome(firstName: string): string {
         while (risultato.length < 3) {
             risultato += 'X';
         }
-    }
-
+      }
+  
     return risultato;
-}
-
-function estraiCodiceDaCognome(lastName: string): string {
-    const vowels = ['A', 'E', 'I', 'O', 'U'];
-    const lettere = lastName.toUpperCase().replace(/[^A-Z]/g, ''); // Rimuove caratteri non alfabetici
-    const consonanti: string[] = [];
-    const vocalilastName: string[] = [];
-
-    for (const lettera of lettere) {
-        if (vowels.includes(lettera)) {
-            vocalilastName.push(lettera);
-        } else {
-            consonanti.push(lettera);
-        }
     }
-
-    let risultato = '';
-
-    // Aggiungi fino a 3 consonanti
-    risultato = consonanti.slice(0, 3).join('');
-
-    // Se non bastano, aggiungi vocali
-    if (risultato.length < 3) {
-        for (const vowel of vocalilastName) {
-            if (risultato.length < 3) {
-                risultato += vowel;
-            }
-        }
-    }
-
-    // Se ancora meno di 3 caratteri, aggiungi 'X'
-    while (risultato.length < 3) {
-        risultato += 'X';
-    }
-
-    return risultato;
-}
 
 function estraiCodiceData(
     birthday: string, // formato: "YYYY-MM-DD"
-    sesso: 'M' | 'F'
+    sex: 'M' | 'F'
 ): string {
     const mesiCodice: { [key: number]: string } = {
         1: 'A',
@@ -159,12 +125,12 @@ function estraiCodiceData(
         12: 'T',
     };
 
-    const [annoStr, meseStr, giornoStr] = birthday.split('-');
-    const year = annoStr.slice(-2); // ultime due cifre
-    const month = mesiCodice[parseInt(meseStr, 10)];
-    let day = parseInt(giornoStr, 10);
+    const [yearStr, monthStr, dayStr] = birthday.split('-');
+    const year = yearStr.slice(-2); // ultime due cifre
+    const month = mesiCodice[parseInt(monthStr, 10)];
+    let day = parseInt(dayStr, 10);
 
-    if (sesso === 'F') {
+    if (sex === 'F') {
         day += 40;
     }
 
@@ -172,23 +138,122 @@ function estraiCodiceData(
 
     return year + month + giornoCodificato;
   }
-  const catastalCode = (comune: string): string | null => {
-     function catastalCode(Comune: string): string | null {
-        const codiceComune = ItalyCities.catastalCode(Comune);
+
+
+calculateControlChar(code: string): string {
+const evenMap: Record<string, number> = {
+'0': 0,
+'1': 1,
+'2': 2,
+'3': 3,
+'4': 4,
+'5': 5,
+'6': 6,
+'7': 7,
+'8': 8,
+'9': 9,
+A: 0,
+B: 1,
+C: 2,
+D: 3,
+E: 4,
+F: 5,
+G: 6,
+H: 7,
+I: 8,
+J: 9,
+K: 10,
+L: 11,
+M: 12,
+N: 13,
+O: 14,
+P: 15,
+Q: 16,
+R: 17,
+S: 18,
+T: 19,
+U: 20,
+V: 21,
+W: 22,
+X: 23,
+Y: 24,
+Z: 25,
+};
+
+const oddMap: Record<string, number> = {
+  '0': 1,
+  '1': 0,
+  '2': 5,
+  '3': 7,
+  '4': 9,
+  '5': 13,
+  '6': 15,
+  '7': 17,
+  '8': 19,
+  '9': 21,
+  A: 1,
+  B: 0,
+  C: 5,
+  D: 7,
+  E: 9,
+  F: 13,
+  G: 15,
+  H: 17,
+  I: 19,
+  J: 21,
+  K: 2,
+  L: 4,
+  M: 18,
+  N: 20,
+  O: 11,
+  P: 3,
+  Q: 6,
+  R: 8,
+  S: 12,
+  T: 14,
+  U: 16,
+  V: 10,
+  W: 22,
+  X: 25,
+  Y: 24,
+  Z: 23,
+};
+
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let sum = 0;
+
+for (let i = 0; i < code.length; i++) {
+  const char = code[i];
+  sum += i % 2 === 0 ? oddMap[char] : evenMap[char];
+}
+
+return alphabet[sum % 26];
+
+}
+
+  const catastalCode = (comune: string) => {
+     function catastalCode(comune: string) {
+        const codiceComune = ItalyCities.catastalCode(comune);
         if (!codiceComune) {
             return null;
         }
         return codiceComune;
-    }
-  
-  const codiceFiscale = ItalyCities.catastalCode(comune);
-  if (!codiceFiscale) {
-      throw new NotFoundException(`Codice catastale non trovato per il comune: ${comune}`);
-    }
-  return codiceFiscale;
-}
-}
+      }
 
+  const codiceComune = ItalyCities.catastalCode(birthdayPlace?);
+  if (!codiceComune) {
+      throw new NotFoundException(`Codice catastale non trovato per il comune: ${comune}`);
+  }
+  
+  
+     return( 
+    codeLastName(lastName) +
+    codeFirstName(firstName) +
+    estraiCodiceData (birthday?, sex?) +
+    catastalCode
+);
+  
+}
   async findPatientsByMainPatientId(mainPatientId: number): Promise<Patient[]> {
     const patients = await this.patientRepository.find({ where: { mainPatientId } });
     if (patients.length === 0) {

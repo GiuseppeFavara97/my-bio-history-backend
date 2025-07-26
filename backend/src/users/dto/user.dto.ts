@@ -6,7 +6,8 @@ import {
     MinLength,
     IsString,
     Matches,
-    IsEnum
+    IsEnum,
+    IsEmpty
 } from 'class-validator';
 import { UserSex } from '../enum/userSex.enum';
 import { UserRole } from '../enum/userRole.enum';
@@ -36,6 +37,9 @@ export class UserDto {
 
     @IsOptional()
     province?: string;
+
+    @IsEmpty()
+    taxCode: string;
 
     @IsOptional()
     @IsEnum(UserSex)

@@ -12,7 +12,7 @@ export class User {
     @Column({ unique: true, nullable: true })
     username: string;
 
-    @Column ({unique: true, nullable: true })
+    @Column({nullable:false})
     taxCode: string;
 
     @Column()

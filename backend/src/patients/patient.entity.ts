@@ -34,10 +34,10 @@ export class Patient {
     @Column({ nullable: true })
     address: string;
 
-    @Column()
+    @Column({ nullable: true })
     taxCode: string;
 
-    @Column()
+    @Column({ nullable: true })
     catastaleCode: string;
 
     @Column({ nullable: true })
