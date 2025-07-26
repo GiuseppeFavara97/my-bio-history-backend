@@ -18,13 +18,14 @@ export class Doctor {
     licenseNumber: string;
 
     @OneToOne(() => User, user => user.doctor)
+    @JoinColumn({ name: 'user_id' })
     @Exclude()
     user: User;
 
-    @OneToMany(() => Diagnosis, (diagnosis) => diagnosis.doctor)
+    @OneToMany(() => Diagnosis, diagnosis => diagnosis.doctor)
     diagnosis: Diagnosis[];
 
-    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.doctor)
+    @ManyToOne(() => MedicalRecord, medicalRecord => medicalRecord.doctor)
     @JoinColumn({ name: 'medicalRecord_id' })
     medicalRecord: MedicalRecord;
 
