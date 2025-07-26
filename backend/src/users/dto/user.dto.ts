@@ -33,20 +33,20 @@ export class UserDto {
 
     @IsOptional()
     @IsDateString()
-    birthday?: Date;
+    birthday: Date;
 
     @IsOptional()
-    province?: string;
+    province: string;
 
     @IsEmpty()
     taxCode: string;
 
     @IsOptional()
     @IsEnum(UserSex)
-    sex?: UserSex;
+    sex: UserSex;
 
     @IsOptional()
-    birthdayPlace?: string;
+    birthdayPlace: string;
 
     @IsOptional()
     @IsString()

@@ -86861,6 +86861,17 @@ export const ItalyCities = {
       "cf": "80017670920"
     }
   ]
-}
+};
+const nomeNorm = nomeComune.trim().toLowerCase();
+for (const foglio in Comuni) {
+      const trovato = Comuni[foglio].find(
+        (c: any) => c.comune.toLowerCase() === nomeNorm
+      );
+      if (trovato) {
+        return trovato.cod_fisco;
+      }
+    }
+    return undefined;
+ }
   }
-  }
+  

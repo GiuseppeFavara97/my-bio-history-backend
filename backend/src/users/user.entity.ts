@@ -12,7 +12,7 @@ export class User {
     @Column({ unique: true, nullable: true })
     username: string;
 
-    @Column({nullable:false})
+    @Column({ unique: true })
     taxCode: string;
 
     @Column()
@@ -62,5 +62,5 @@ export class User {
     @OneToOne(() => Doctor, doctor => doctor.user, { cascade: true })
     @JoinColumn({ name: 'doctor_id' })
     doctor?: Doctor;
-    
+
 }
