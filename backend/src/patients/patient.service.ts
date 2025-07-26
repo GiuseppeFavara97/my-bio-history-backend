@@ -3,11 +3,6 @@ import { Patient } from './patient.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PatientDto } from './dto/patient.dto';
-import { User } from 'src/users/user.entity';
-import {ItalyCities} from '../common/utils/italyCities';
-import { UserSex } from 'src/users/enum/userSex.enum';
-import { UserDto } from 'src/users/dto/user.dto';
-import { Comune } from 'codice-fiscale-js/types/comune';
 import { MedicalRecordService } from '../medicalRecords/medical.service';
 
 
@@ -17,7 +12,7 @@ export class PatientService {
     @InjectRepository(Patient)
     private patientRepository: Repository<Patient>,
     private medicalRecordService: MedicalRecordService,
-  ) {}
+  ) { }
 
   async createPatient(patientDto: PatientDto): Promise<Patient> {
     const patient = this.patientRepository.create(patientDto);
@@ -53,7 +48,7 @@ export class PatientService {
       throw new NotFoundException(`Patient with ID ${id} not found`);
     }
   }
-  
+
   async findPatientsByMainPatientId(mainPatientId: number): Promise<Patient[]> {
     const patients = await this.patientRepository.find({ where: { mainPatientId } });
     if (patients.length === 0) {
