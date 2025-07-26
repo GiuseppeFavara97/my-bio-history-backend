@@ -7,10 +7,11 @@ import { User } from 'src/users/user.entity';
 @Controller('patients')
 export class PatientController {
   constructor(private patientService: PatientService) { }
-  @Post('create')
+ /* @Post('create')
   async createPatient(@Body() patientDto: PatientDto): Promise<Patient> {
     return this.patientService.createPatient(patientDto);
   }
+    */
   @Get()
   async findAllPatients(): Promise<Patient[]> {
     return this.patientService.findAllPatients();
@@ -40,10 +41,7 @@ export class PatientController {
   async findPatientsByFullName(@Param('fullName') fullName: string): Promise<Patient[]> {
     return this.patientService.findPatientsByFullName(fullName);
   }
-  @Get('taxCode/:taxCode')
-  async findPatientsByTaxCode(@Param('taxCode') taxCode: string): Promise<Patient[]> {
-    return this.patientService.findPatientsByTaxCode(taxCode);
-  }
+  
   @Get('relation/:relationToMainPatient')
   async findPatientsByRelationToMainPatient(@Param('relationToMainPatient') relationToMainPatient: string): Promise<Patient[]> {
     return this.patientService.findPatientsByRelationToMainPatient(relationToMainPatient);
