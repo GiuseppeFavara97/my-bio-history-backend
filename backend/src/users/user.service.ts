@@ -94,47 +94,47 @@ export class UserService {
 
         function estraiCodiceDaNome(firstName: string): string {
             const vowels = ['A', 'E', 'I', 'O', 'U'];
-            const lettere = firstName.toUpperCase().replace(/[^A-Z]/g, '');
-            const consonanti: string[] = [];
-            const vocalifirstName: string[] = [];
+            const lecters = firstName.toUpperCase().replace(/[^A-Z]/g, '');
+            const consonants: string[] = [];
+            const vowelsfirstName: string[] = [];
 
-            for (const lettera of lettere) {
-                if (vowels.includes(lettera)) {
-                    vocalifirstName.push(lettera);
+            for (const lecter of lecters) {
+                if (vowels.includes(lecter)) {
+                    vowelsfirstName.push(lecter);
                 } else {
-                    consonanti.push(lettera);
+                    consonants.push(lecter);
 
                 }
             }
 
-            let risultato = '';
+            let result = '';
 
-            if (consonanti.length >= 4) {
+            if (consonants.length >= 4) {
                 // Se ci sono almeno 4 consonanti, prendi la 1a, 3a e 4a
-                risultato = consonanti[0] + consonanti[2] + consonanti[3];
+                result = consonants[0] + consonants[2] + consonants[3];
             } else {
                 // Prendi tutte le consonanti disponibili
-                risultato = consonanti.join('');
+                result = consonants.join('');
                 // Completa con vocali se non bastano
-                for (const vocale of vocalifirstName) {
-                    if (risultato.length < 3) {
-                        risultato += vocale;
+                for (const vowel of vowelsfirstName) {
+                    if (result.length < 3) {
+                        result += vowel;
                     }
                 }
                 // Se ancora meno di 3 lettere, aggiungi X
-                while (risultato.length < 3) {
-                    risultato += 'X';
+                while (result.length < 3) {
+                    result += 'X';
                 }
             }
 
-            return risultato;
+            return result;
         }
 
-        function estraiCodiceData(
+        function extractDataCode(
             birthday: string | Date, // formato: "YYYY-MM-DD"
             sex: 'M' | 'F'
         ): string {
-            const mesiCodice: { [key: number]: string } = {
+            const monthCode: { [key: number]: string } = {
                 1: 'A',
                 2: 'B',
                 3: 'C',
@@ -151,17 +151,17 @@ export class UserService {
 
             const dateObj = birthday instanceof Date ? birthday : new Date(birthday);
             const year = dateObj.getFullYear().toString().slice(-2); // ultime due cifre
-            const month = mesiCodice[dateObj.getMonth() + 1];
+            const month = monthCode[dateObj.getMonth() + 1];
             let day = dateObj.getDate();
 
             if (sex === 'F') {
                 day += 40;
             }
 
-            const giornoCodificato = day.toString().padStart(2, '0');
+            const dayCode = day.toString().padStart(2, '0');
 
 
-            return `${year}${month}${giornoCodificato}`;
+            return `${year}${month}${dayCode}`;
 
 
         };
@@ -269,12 +269,12 @@ export class UserService {
         return (
             codeLastName(lastName) +
             codeFirstName(firstName) +
-            estraiCodiceData(birthday, sex) +
+            extractDataCode(birthday, sex) +
             catastalCode +
             calculateControlChar(
                 codeLastName(lastName) +
                 codeFirstName(firstName) +
-                estraiCodiceData(birthday, sex) +
+                extractDataCode(birthday, sex) +
                 catastalCode
             )
         );

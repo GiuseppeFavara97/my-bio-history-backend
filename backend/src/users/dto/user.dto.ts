@@ -7,7 +7,8 @@ import {
     IsString,
     Matches,
     IsEnum,
-    IsEmpty
+    IsEmpty,
+    MaxLength
 } from 'class-validator';
 import { UserSex } from '../enum/userSex.enum';
 import { UserRole } from '../enum/userRole.enum';
@@ -38,6 +39,7 @@ export class UserDto {
     @IsOptional()
     province: string;
 
+    @MaxLength(16)
     @IsEmpty()
     taxCode: string;
 
