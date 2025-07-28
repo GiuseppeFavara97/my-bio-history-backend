@@ -11,30 +11,33 @@ import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { Request } from 'express';
 
+import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) {}
+  constructor(
+    private jwtService: JwtService,
+    private reflector: Reflector,
+    private configService: ConfigService, // 👈 aggiungi ConfigService
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-    context.getHandler(),
-    context.getClass(),
+      context.getHandler(),
+      context.getClass(),
     ]);
-    if(isPublic) {
-      return true;
-    }
-      const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-      if(!token) {
-        throw new UnauthorizedException('Token not found');
-      }
+    if (isPublic) return true;
 
-      try {
+    const request = context.switchToHttp().getRequest();
+    const token = this.extractTokenFromHeader(request);
+    if (!token) throw new UnauthorizedException('Token not found');
+
+    try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
+        secret: this.configService.get<string>('JWT_SECRET'), // ✅ usa lo stesso secret
       });
       request['user'] = payload;
-    } catch {
+    } catch (e) {
       throw new UnauthorizedException('Token non valido');
     }
 

@@ -12,7 +12,7 @@ export class User {
     @Column({ unique: true, nullable: true })
     username: string;
 
-    @Column({ unique: true })
+    @Column({ unique: true,nullable: true})
     taxCode: string;
 
     @Column()
@@ -35,6 +35,8 @@ export class User {
 
     @Column()
     province: string;
+    @Column({ nullable: true })
+    profileImageUrl?: string;
 
     @Column({ type: 'enum', enum: UserSex })
     sex: UserSex;
