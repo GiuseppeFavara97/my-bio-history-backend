@@ -1,6 +1,10 @@
+import { Exclude } from 'class-transformer';
 import { IsNotEmpty, IsEmpty } from 'class-validator';
 
 export class PatientDto {
+
+    @Exclude()
+    user: any;
 
     @IsEmpty()
     mainPatientId: number;
@@ -10,9 +14,6 @@ export class PatientDto {
 
     @IsNotEmpty()
     address?: string;
-
-    @IsNotEmpty()
-    taxCode?: string;
 
     @IsEmpty()
     relationToMainPatient?: string;
