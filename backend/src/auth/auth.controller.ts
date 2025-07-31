@@ -12,8 +12,8 @@ import {
   UploadedFile,
   Req,
 } from '@nestjs/common';
-import {Public} from './auth.decorator';
-import {AuthGuard} from './auth.guard';
+import { Public } from './auth.decorator';
+import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { UserService } from '../users/user.service';
 import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
@@ -27,10 +27,10 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private userService: UserService
-  ) {}
+  ) { }
 
 
-@Post('upload-profile-image')
+  @Post('upload-profile-image')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -52,10 +52,11 @@ export class AuthController {
     return { imageUrl };
   }
 
+
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() body: {email: string; password: string}) {
+  signIn(@Body() body: { email: string; password: string }) {
     return this.authService.signIn(body.email, body.password);
   }
 
