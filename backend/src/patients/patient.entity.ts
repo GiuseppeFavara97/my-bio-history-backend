@@ -34,7 +34,9 @@ export class Patient {
     @Column({ nullable: true })
     address: string;
 
-
+    @Column({ default: false })
+    deleted: boolean;
+    
     @Column({ nullable: true })
     relationToMainPatient: string;
 
