@@ -9,6 +9,8 @@ import { MedicalRecordService } from '../medicalRecords/medical.service';
 import { DoctorService } from '../doctors/doctor.service';
 import { PatientService } from '../patients/patient.service';
 import * as bcrypt from 'bcrypt';
+import { stringify } from 'querystring';
+import { checkPrime } from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -36,6 +38,7 @@ export class UserService {
             phoneNumber: userDto.phoneNumber,
             role: userDto.role,
             taxCode: this.generateTaxCode(userDto),
+            username: await this.generateUserName(userDto)
 
         });
 
@@ -67,6 +70,29 @@ export class UserService {
 
 
     }
+
+    async generateUserName(user: UserDto): Promise<string> {
+        const name = user.firstName.toLowerCase();
+        const lastName = user.lastName.toLowerCase();
+        let a: number = 0;
+        let Genusername: string;
+
+        while (true) {
+            const formatNum = a.toString().padStart(4, '0');
+            Genusername = `${name}.${lastName}${formatNum}`;
+
+            const check = await this.userRepository.findOne({ where: { username: Genusername } });
+
+            if (!check) {
+                break;
+            }
+
+        a++;
+    }
+
+    return Genusername;
+}
+
 
     generateTaxCode(dto: UserDto): string {
         const { firstName, lastName, birthday, birthdayPlace, sex } = dto;
