@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
-import { AuthModule } from './auth/auth.module';;
+import { AuthModule } from './auth/auth.module';
 import { UserModule } from './users/user.module';
 import { DoctorModule } from './doctors/doctor.module';
 import { DiagnosisModule } from './diagnoses/diagnosis.module';
@@ -14,7 +14,6 @@ import { MedicalRecordModule } from './medicalRecords/medical.module';
 import { PatientModule } from './patients/patient.module';
 import { VaccineModule } from './vaccines/vaccine.module';
 import { UploadDocumentModule } from './uploadDocuments/uploadDocument.module';
-
 
 dotenv.config();
 
