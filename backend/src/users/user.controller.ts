@@ -1,8 +1,13 @@
-import { Controller, Post, Get, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { Public } from 'src/auth/auth.decorator';
 import { instanceToPlain } from 'class-transformer';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { UserRole } from './enum/userRole.enum';
+
 
 @Controller('users')
 export class UserController {
@@ -13,7 +18,8 @@ export class UserController {
         const user = await this.userService.createUser(userDto);
         return instanceToPlain(user);
     }
-    @Public()
+    @UseGuards(AuthGuard , RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Get()
     async findAllUsers(): Promise<any> {
         const users = await this.userService.findAllUsers();
