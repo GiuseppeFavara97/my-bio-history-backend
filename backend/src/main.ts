@@ -10,10 +10,7 @@ async function bootstrap() {
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
   // Abilita CORS per permettere al frontend di comunicare
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'https://my-bio-history-frontend.vercel.app'
-    ],
+    origin: true, // permette a qualsiasi origine di accedere
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
