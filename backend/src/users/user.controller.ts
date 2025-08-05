@@ -7,6 +7,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { UserRole } from './enum/userRole.enum';
+import { User } from './user.entity';
 
 
 @Controller('users')
@@ -38,7 +39,7 @@ export class UserController {
     }
     @Public()
     @Delete(':id')
-    async deleteUser(@Param('id') id: number): Promise<void> {
-        return this.userService.deleteUser(id);
+    async deleteUser(@Param('id') id: number): Promise<User> {
+        return this.userService.softDeleteUser(id);
     }
 }
