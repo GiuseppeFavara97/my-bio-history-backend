@@ -15,6 +15,9 @@ export class User {
     @Column({ unique: true, nullable: true })
     taxCode: string;
 
+    @Column({ default: false })
+    softDeleted: boolean;
+
     @Column()
     password: string;
 

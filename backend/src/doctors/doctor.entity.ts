@@ -14,6 +14,9 @@ export class Doctor {
     @Column()
     specializer: string;
 
+    @Column({ default: false })
+    softDeleted: boolean;
+
     @Column()
     licenseNumber: string;
 

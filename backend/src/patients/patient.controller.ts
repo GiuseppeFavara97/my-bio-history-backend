@@ -3,6 +3,7 @@ import { PatientService } from './patient.service';
 import { Patient } from './patient.entity';
 import { PatientDto } from './dto/patient.dto';
 import { User } from 'src/users/user.entity';
+import { publicDecrypt } from 'crypto';
 
 @Controller('patients')
 export class PatientController {
@@ -25,9 +26,10 @@ export class PatientController {
     Patient): Promise<Patient> {
     return this.patientService.updatePatient(id, patientDto);
   }
+  
   @Delete(':id')
-  async deletePatient(@Param('id') id: number): Promise<void> {
-    return this.patientService.deletePatient(id);
+  async deletePatient(@Param('id') id: number): Promise<Patient> {
+    return this.patientService.softDeletePatient(id);
   }
   @Get('mainPatient/:mainPatientId')
   async findPatientsByMainPatientId(@Param('mainPatientId') mainPatientId: number): Promise<Patient[]> {

@@ -30,7 +30,7 @@ export class DoctorController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.doctorService.removeDoctor(+id);
+  remove(@Param('id') id: number): Promise<Doctor> {
+    return this.doctorService.softDeleteDoctor(id);
   }
 }

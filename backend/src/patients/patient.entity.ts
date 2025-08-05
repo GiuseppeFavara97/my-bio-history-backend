@@ -25,6 +25,9 @@ export class Patient {
     @Column({ nullable: true })
     mainPatientId: number;
 
+    @Column({ default: false })
+    softDeleted: boolean;
+
     @Column({ nullable: true })
     userId: number;
 

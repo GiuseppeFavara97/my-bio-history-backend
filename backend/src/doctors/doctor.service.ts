@@ -3,10 +3,16 @@ import { DoctorDto } from './dto/doctor.dto';
 import { Doctor } from './doctor.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../users/user.entity';
+
 
 
 @Injectable()
 export class DoctorService {
+  removeDoctor(id: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  userRepository: any;
   constructor(
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>
@@ -30,15 +36,32 @@ export class DoctorService {
     return doctor;
   }
 
+  async softDeleteDoctor(id: number): Promise<Doctor> {
+    const doctor = await this.doctorRepository.findOne({
+      where: { id },
+      relations: ['user'], // <-- FIXED: use array of relation names
+    });
+
+    if (!doctor) throw new NotFoundException('Doctor not found');
+
+    // 1. Soft delete doctor
+    await this.doctorRepository.update(id, {
+      softDeleted: true
+    });
+
+    // 2. Soft delete linked user
+    if (doctor.user) {
+      await this.userRepository.update(doctor.user.id, { deleted: true });
+      doctor.user.softDeleted = true; // Update the user object to reflect the soft delete
+    }
+    doctor.softDeleted = true; // Update the doctor object to reflect the soft delete
+    return doctor;
+  }
+
   async updateDoctor(id: number, doctorDto: DoctorDto): Promise<Doctor> {
     await this.doctorRepository.update(id, doctorDto);
     return this.findDoctorsById(id);
   }
 
-  async removeDoctor(id: number): Promise<void> {
-    const result = await this.doctorRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Doctor with ID ${id} not found`);
-    }
-  }
+  
 }

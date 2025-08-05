@@ -42,12 +42,23 @@ export class PatientService {
     return this.findPatientById(id);
   }
 
-  async deletePatient(id: number): Promise<void> {
-    const result = await this.patientRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Patient with ID ${id} not found`);
+   async softDeletePatient(id: number): Promise<Patient> {
+    const patient = await this.patientRepository.findOne({
+      where: { id },
+      relations: ['user'], // <-- FIXED: use array of relation names
+    });
+    if (!patient) throw new NotFoundException(`Patient not found`);
+    // 1. Soft delete patient
+      await this.patientRepository.update(id, { softDeleted: true });
+    // 2. Soft delete linked user
+    if (patient.user) {
+      await this.patientRepository.update(patient.user.id, { softDeleted: true });
+      patient.user.softDeleted = true; // Update the user object to reflect the soft delete
     }
+    patient.softDeleted = true; // Update the patient object to reflect the soft delete
+    return patient;
   }
+
 
   async findPatientsByMainPatientId(mainPatientId: number): Promise<Patient[]> {
     const patients = await this.patientRepository.find({ where: { mainPatientId } });

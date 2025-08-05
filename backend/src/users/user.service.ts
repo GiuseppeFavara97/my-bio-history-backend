@@ -11,13 +11,25 @@ import { PatientService } from '../patients/patient.service';
 import * as bcrypt from 'bcrypt';
 import { stringify } from 'querystring';
 import { checkPrime } from 'crypto';
+import { Patient } from '../patients/patient.entity';
+import { Doctor } from '../doctors/doctor.entity';
+import { Delete } from '@nestjs/common';
+
+
 
 @Injectable()
 export class UserService {
+    deleteUser(id: number): void | PromiseLike<void> {
+        throw new Error('Method not implemented.');
+    }
     users: any;
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
+        @InjectRepository(Doctor)
+        private doctorRepository: Repository<any>,
+        @InjectRepository(Patient)
+        private patientRepository: Repository<any>,
         private doctorService: DoctorService,
         private patientService: PatientService,
 
@@ -329,12 +341,22 @@ export class UserService {
         return this.findUserById(id);
     }
 
-    async deleteUser(id: number): Promise<void> {
-        const result = await this.userRepository.delete(id);
-        if (result.affected === 0) {
-            throw new NotFoundException(`User with ID ${id} not found`);
+     async softDeleteUser(id: number): Promise<User> {
+        const user = await this.findUserById(id);
+    if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+    } else {
+        await this.userRepository.update(id, { softDeleted: true });
+        if (user.role === UserRole.DOCTOR) {
+            await this.doctorRepository.update({user: {id: user.id}}, { deleted: true }); 
+        } else if (user.role === UserRole.PATIENT) {
+            await this.patientRepository.update({user: {id: user.id}}, { deleted: true }); 
         }
+
+    return this.findUserById(id); // Return the user object after marking it as deleted
     }
+    }
+
 
     async findOne(email: string, password: string): Promise<User | undefined> {
         // logica per trovare l'utente
