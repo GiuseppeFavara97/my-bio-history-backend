@@ -11,7 +11,7 @@ export class CareController {
     return this.careService.createcare(careDto);
   }
 
-  @Get('all')
+  @Get()
   findAll() {
     return this.careService.findAllcare();
   }

@@ -13,7 +13,7 @@ export class AllergyController {
         return this.allergyService.createAllergy(allergyDto);
     }
 
-    @Get('all')
+    @Get()
     async findAllAllergies(): Promise<Allergy[]> {
         return this.allergyService.findAllAllergies();
     }
