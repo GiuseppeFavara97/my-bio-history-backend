@@ -7,7 +7,8 @@ import {
     DeleteDateColumn,
     OneToMany,
     JoinColumn,
-    OneToOne
+    OneToOne,
+    ManyToMany
 } from 'typeorm';
 
 import { User } from '../users/user.entity';
@@ -16,6 +17,7 @@ import { Vaccine } from '../vaccines/vaccine.entity';
 import { UploadDocument } from '../uploadDocuments/uploadDocument.entity';
 import { MedicalRecord } from '../medicalRecords/medical.entity';
 import { Exclude } from 'class-transformer';
+import { Doctor } from 'src/doctors/doctor.entity';
 
 @Entity("patients")
 export class Patient {
@@ -65,4 +67,7 @@ export class Patient {
     @JoinColumn({ name: 'userId' })
     @Exclude()
     user: User;
+
+    @ManyToMany(() => Doctor, (doctor) => doctor.patients)
+    doctors: Doctor[];
 }
