@@ -29,7 +29,7 @@ export class AllergyService {
             severity: allergysDto.severity,
             note: allergysDto.note,
             patient: { id: patient.id },
-            medicalRecords: { id: patient.medicalRecord.id }
+            medicalRecord: { id: patient.medicalRecord.id }
         });
         this.allergyRepository.save(allergy);
         return allergy;

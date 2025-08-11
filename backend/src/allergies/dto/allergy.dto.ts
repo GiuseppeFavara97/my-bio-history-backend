@@ -9,6 +9,4 @@ export class AllergyDto {
     start_date?: Date;
     end_date?: Date;
     patientId: number;
-    medicalRecordId: number;
-
 }
