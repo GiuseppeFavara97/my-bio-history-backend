@@ -16,7 +16,6 @@ export class Pathology {
     @Column({ nullable: true })
     description: string;
 
-    @ManyToOne(() => Diagnosis, (diagnosis) => diagnosis.pathology, { nullable: true })
-    @JoinColumn({ name: 'diagnosis_id' })
-    diagnosis: Diagnosis;
+    @ManyToOne(() => Diagnosis, (diagnosis) => diagnosis.pathology)
+    diagnosis: Diagnosis[];
 }
