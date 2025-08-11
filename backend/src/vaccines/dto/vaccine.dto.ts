@@ -7,5 +7,4 @@ export class VaccineDto {
     type?: string;
     note?: string;
     patientId: number;
-    medicalRecordId: number;
 }
