@@ -17,18 +17,16 @@ export class Diagnosis {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 
-    @OneToMany(() => Care, (care) => care.diagnosis)
-    care: Care[];
+    @ManyToOne(() => Pathology, (pathology) => pathology.diagnosis)
+    pathology: Pathology;
 
-    @OneToMany(() => Pathology, (pathology) => pathology.diagnosis)
-    pathology: Pathology[];
-
-    @ManyToOne(() => Doctor, (doctor) => doctor.diagnosis, { nullable: true })
-    @JoinColumn({ name: 'doctor_id' })
+    @ManyToOne(() => Doctor, (doctor) => doctor.diagnosis)
     doctor: Doctor;
 
-    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.diagnosis, { nullable: true })
-    @JoinColumn({ name: 'medicalRecord_id' })
+    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.diagnoses)
     medicalRecords: MedicalRecord;
+
+    @ManyToOne(() => Care, (care) => care.diagnosis)
+    care: Care;
 
 }
