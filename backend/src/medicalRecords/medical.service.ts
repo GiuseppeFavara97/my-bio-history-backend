@@ -10,6 +10,10 @@ export class MedicalRecordService {
     constructor(
         @InjectRepository(MedicalRecord)
         private medicalRepository: Repository<MedicalRecord>,
+
+        @InjectRepository(Patient)
+        private patientRepository: Repository<Patient>,
+
     ) { }
 
     async createMedicalRecord(medicalRecordDto: MedicalRecordDto): Promise<MedicalRecord> {
@@ -43,5 +47,12 @@ export class MedicalRecordService {
         if (result.affected === 0) {
             throw new NotFoundException(`Medical_Records with ID ${id} not found`);
         }
+    }
+
+    async findByPatient(patientId: number): Promise<MedicalRecord> {
+        return this.medicalRepository.findOne({
+            where: { patient: { id: patientId } },
+            relations: ['diagnoses', 'cares'],
+        });
     }
 }
