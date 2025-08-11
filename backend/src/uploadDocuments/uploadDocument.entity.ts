@@ -19,11 +19,11 @@ export class UploadDocument {
     @CreateDateColumn()
     createdAt: Date
 
-    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.uploadDocument)
-    @JoinColumn({ name: 'medicalRecord_id' })
-    medicalRecord: MedicalRecord;
-
     @ManyToOne(() => Patient, (patient) => patient.uploadDocuments)
     @JoinColumn({ name: 'patient_id' })
     patient: Patient;
+
+    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.uploadDocuments)
+    @JoinColumn({ name: 'medicalRecord_id' })
+    medicalRecord: MedicalRecord;
 }

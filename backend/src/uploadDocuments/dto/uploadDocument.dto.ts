@@ -5,6 +5,5 @@ export class UploadDocumentDto {
     type?: string;
     size?: number;
     url?: string;
-    medicalRecordId: number;
     patientId: number;
 }
