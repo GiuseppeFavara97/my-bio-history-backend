@@ -3,17 +3,36 @@ import { Allergy } from './allergy.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AllergyDto } from './dto/allergy.dto';
+import { Patient } from 'src/patients/patient.entity';
 
 @Injectable()
 export class AllergyService {
     constructor(
         @InjectRepository(Allergy)
         private allergyRepository: Repository<Allergy>,
+        @InjectRepository(Patient)
+        private patientRepository: Repository<Patient>,
     ) { }
 
     async createAllergy(allergysDto: AllergyDto): Promise<Allergy> {
-        const allergy = this.allergyRepository.create(allergysDto);
-        return this.allergyRepository.save(allergy);
+        const patient = await this.patientRepository.findOne({
+            where: { id: allergysDto.patientId },
+            relations: ["medicalRecord"]
+        });
+
+        if (!patient) {
+            throw new NotFoundException(`Patient with ID ${allergysDto.patientId} not found`);
+        }
+        const allergy = this.allergyRepository.create({
+            allergen: allergysDto.allergen,
+            reaction: allergysDto.reaction,
+            severity: allergysDto.severity,
+            note: allergysDto.note,
+            patient: { id: patient.id },
+            medicalRecords: { id: patient.medicalRecord.id }
+        });
+        this.allergyRepository.save(allergy);
+        return allergy;
     }
 
     async findAllAllergies(): Promise<Allergy[]> {

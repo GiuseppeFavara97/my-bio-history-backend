@@ -59,7 +59,6 @@ export class Patient {
     uploadDocuments: UploadDocument[];
 
     @OneToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.patient)
-    @JoinColumn({ name: 'medicalRecord_id' })
     medicalRecord: MedicalRecord;
 
     @OneToOne(() => User, user => user.patient)
