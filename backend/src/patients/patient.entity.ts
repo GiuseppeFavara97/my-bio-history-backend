@@ -8,7 +8,8 @@ import {
     OneToMany,
     JoinColumn,
     OneToOne,
-    ManyToMany
+    ManyToMany,
+    ManyToOne
 } from 'typeorm';
 
 import { User } from '../users/user.entity';
@@ -18,6 +19,7 @@ import { UploadDocument } from '../uploadDocuments/uploadDocument.entity';
 import { MedicalRecord } from '../medicalRecords/medical.entity';
 import { Exclude } from 'class-transformer';
 import { Doctor } from 'src/doctors/doctor.entity';
+import { Diagnosis } from 'src/diagnoses/diagnosis.entity';
 
 @Entity("patients")
 export class Patient {
@@ -70,4 +72,7 @@ export class Patient {
 
     @ManyToMany(() => Doctor, (doctor) => doctor.patients)
     doctors: Doctor[];
+
+    @ManyToOne(() => Diagnosis, (diagnosis) => diagnosis.patient)
+    diagnoses: Diagnosis[];
 }
