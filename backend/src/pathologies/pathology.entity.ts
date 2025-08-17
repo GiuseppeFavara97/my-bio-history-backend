@@ -16,6 +16,7 @@ export class Pathology {
     @Column({ nullable: true })
     description: string;
 
-    @ManyToOne(() => Diagnosis, (diagnosis) => diagnosis.pathology)
+    /*@ManyToOne(() => Diagnosis, (diagnosis) => diagnosis.pathology)
     diagnosis: Diagnosis[];
+    */
 }
