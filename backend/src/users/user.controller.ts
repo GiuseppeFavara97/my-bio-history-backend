@@ -19,7 +19,7 @@ export class UserController {
         const user = await this.userService.createUser(userDto);
         return instanceToPlain(user);
     }
-    @UseGuards(AuthGuard , RolesGuard)
+    @UseGuards(AuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Get()
     async findAllUsers(): Promise<any> {
