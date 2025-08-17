@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MedicalRecord } from 'src/medicalRecords/medical.entity';
 import { Pathology } from 'src/pathologies/pathology.entity';
 import { Doctor } from 'src/doctors/doctor.entity';
+import { Patient } from 'src/patients/patient.entity';
 
 @Injectable()
 export class DiagnosisService {
@@ -17,26 +18,33 @@ export class DiagnosisService {
     private medicalRecordRepository: Repository<MedicalRecord>,
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>,
-    @InjectRepository(Pathology)
-    private pathologyRepository: Repository<Pathology>,
+    @InjectRepository(Patient)
+    private patientRepository: Repository<Patient>,
   ) { }
 
-  async createDiagnosis(dto: { medicalRecordId: number; doctorId: number; pathologyId: number; description: string; date: Date }): Promise<Diagnosis> {
-    const medicalRecord = await this.medicalRecordRepository.findOne({ where: { id: dto.medicalRecordId } });
-    const doctor = await this.doctorRepository.findOne({ where: { id: dto.doctorId } });
-    const pathology = await this.pathologyRepository.findOne({ where: { id: dto.pathologyId } });
-
-    if (!medicalRecord || !doctor || !pathology) throw new NotFoundException('MedicalRecord, Doctor or Pathology not found');
+  async createDiagnosis(diagnosisDto: DiagnosisDto): Promise<Diagnosis> {
+    const doctor = await this.doctorRepository.findOne({
+      where: { id: diagnosisDto.doctorId },
+    });
+    if (!doctor) {
+      throw new NotFoundException(`Doctor with ID ${diagnosisDto.doctorId} not found`);
+    }
+    const patient = await this.patientRepository.findOne({
+      where: { id: diagnosisDto.patientId },
+      relations: ['medicalRecords'],
+    });
+    if (!patient) {
+      throw new NotFoundException(`Patient with ID ${diagnosisDto.patientId} not found`);
+    }
 
     const diagnosis = this.diagnosisRepository.create({
-      medicalRecord,
-      doctor,
-      pathology,
-      description: dto.description,
-      date: dto.date,
+      description: diagnosisDto.description,
+      doctor: { id: doctor.id },
+      patient: { id: patient.id },
+      medicalRecords: { id: patient.medicalRecord.id }
     });
-
-    return this.diagnosisRepository.save(diagnosis);
+    await this.diagnosisRepository.save(diagnosis);
+    return diagnosis;
   }
 
   async findAllDiagnosis(): Promise<Diagnosis[]> {
