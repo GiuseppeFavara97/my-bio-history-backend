@@ -12,19 +12,19 @@ export class DiagnosisController {
     return this.diagnosisService.createDiagnosis(diagnosisDto);
   }
 
-  @Get('all')
+  @Get()
   findAll() {
     return this.diagnosisService.findAllDiagnosis();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.diagnosisService.findOneDiagnosis(+id);
+  findOne(@Param('id') id: number) {
+    return this.diagnosisService.findOneDiagnosis(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() diagnosisDto: DiagnosisDto) {
-    return this.diagnosisService.updateDiagnosis(+id, diagnosisDto);
+  update(@Param('id') id: number, @Body() diagnosisDto: DiagnosisDto) {
+    return this.diagnosisService.updateDiagnosis(id, diagnosisDto);
   }
 
   @Delete(':id')

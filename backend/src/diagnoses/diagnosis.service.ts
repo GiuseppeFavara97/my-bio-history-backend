@@ -3,7 +3,6 @@ import { DiagnosisDto } from './dto/diagnosis.dto';
 import { Diagnosis } from './diagnosis.entity'
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MedicalRecord } from 'src/medicalRecords/medical.entity';
 import { Pathology } from 'src/pathologies/pathology.entity';
 import { Doctor } from 'src/doctors/doctor.entity';
 import { Patient } from 'src/patients/patient.entity';
@@ -14,8 +13,6 @@ export class DiagnosisService {
   constructor(
     @InjectRepository(Diagnosis)
     private diagnosisRepository: Repository<Diagnosis>,
-    @InjectRepository(MedicalRecord)
-    private medicalRecordRepository: Repository<MedicalRecord>,
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>,
     @InjectRepository(Patient)
@@ -31,7 +28,7 @@ export class DiagnosisService {
     }
     const patient = await this.patientRepository.findOne({
       where: { id: diagnosisDto.patientId },
-      relations: ['medicalRecords'],
+      relations: ['medicalRecord'],
     });
     if (!patient) {
       throw new NotFoundException(`Patient with ID ${diagnosisDto.patientId} not found`);
