@@ -11,9 +11,6 @@ export class MedicalRecordService {
         @InjectRepository(MedicalRecord)
         private medicalRepository: Repository<MedicalRecord>,
 
-        @InjectRepository(Patient)
-        private patientRepository: Repository<Patient>,
-
     ) { }
 
     async createMedicalRecord(medicalRecordDto: MedicalRecordDto): Promise<MedicalRecord> {
@@ -49,10 +46,4 @@ export class MedicalRecordService {
         }
     }
 
-    async findByPatient(patientId: number): Promise<MedicalRecord> {
-        return this.medicalRepository.findOne({
-            where: { patient: { id: patientId } },
-            relations: ['diagnoses', 'cares'],
-        });
-    }
 }
