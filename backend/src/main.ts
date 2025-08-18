@@ -3,11 +3,13 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { join } from 'path';
 import * as express from 'express';
+import * as cookieParser from 'cookie-parser'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
+  app.use(cookieParser());
   // Abilita CORS per permettere al frontend di comunicare
   app.enableCors({
     origin: 'http://localhost:3000',

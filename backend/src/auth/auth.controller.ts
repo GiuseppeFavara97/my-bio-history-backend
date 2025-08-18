@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Req,
+  Res,
 } from '@nestjs/common';
 import { Public } from './auth.decorator';
 import { AuthGuard } from './auth.guard';
@@ -20,6 +21,7 @@ import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { Response } from 'express';
 
 
 @Controller('auth')
@@ -56,8 +58,21 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() body: { email: string; password: string }) {
-    return this.authService.signIn(body.email, body.password);
+  async signIn(
+    @Body() body: { email: string; password: string },
+    @Res ({passthrough: true}) res: Response,
+  ) {
+
+     const {access_token,user} = await this.authService.signIn(body.email, body.password);
+      res.cookie('auth_token', access_token, {
+        httpOnly: true,
+        secure: false,  
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        });
+      return { user };
+
   }
 
   @UseGuards(AuthGuard)
@@ -73,5 +88,10 @@ export class AuthController {
     // Opzionale: rimuovi la password prima di rispondere
     const { password, ...userSafe } = user;
     return userSafe;
+  }
+  @UseGuards(AuthGuard)
+  @Get('userID')
+  userID(@Req() req) {
+    return {id: req.user.sub, email: req.user.email, role: req.user.role}
   }
 }
