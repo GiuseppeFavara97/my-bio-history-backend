@@ -8,7 +8,6 @@ import { UserModule } from './users/user.module';
 import { DoctorModule } from './doctors/doctor.module';
 import { DiagnosisModule } from './diagnoses/diagnosis.module';
 import { CareModule } from './care/care.module';
-import { PathologyModule } from './pathologies/pathology.module';
 import { AllergyModule } from './allergies/allergy.module';
 import { MedicalRecordModule } from './medicalRecords/medical.module';
 import { PatientModule } from './patients/patient.module';
@@ -34,7 +33,6 @@ dotenv.config();
     DoctorModule,
     DiagnosisModule,
     CareModule,
-    PathologyModule,
     AllergyModule,
     MedicalRecordModule,
     PatientModule,
