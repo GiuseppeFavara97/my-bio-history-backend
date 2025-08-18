@@ -17,6 +17,9 @@ export class Care {
     @Column({ nullable: true })
     description: string;
 
+    @Column ({default: false})
+    softDeleted: boolean;
+
     @Column({ nullable: true })
     duration_days: number;
 

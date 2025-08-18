@@ -1,5 +1,5 @@
 
-import { Controller, Post, Get, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Body, Param, Patch } from '@nestjs/common';
 import { MedicalRecordService } from './medical.service';
 import { MedicalRecord } from './medical.entity';
 import { MedicalRecordDto } from './dto/medicalRecord.dto';
@@ -29,12 +29,12 @@ export class MedicalRecordController {
     }
 
     @Put(':id')
-    async updateMedicalRecord(@Param('id') id: number, @Body() medicalRecordDto: MedicalRecordDto): Promise<MedicalRecord> {
+    update(@Param('id') id: number, @Body() medicalRecordDto: MedicalRecordDto): Promise<MedicalRecord> {
         return this.medicalRecordService.updateMedicalRecord(id, medicalRecordDto);
     }
 
-    @Delete(':id')
-    async deleteMedicalRecord(@Param('id') id: number): Promise<void> {
-        return this.medicalRecordService.deleteMedicalRecord(id);
+    @Patch(':id')
+    softDelete(@Param('id') id: number): Promise<MedicalRecord> {
+        return this.medicalRecordService.softDeleteMedical(id);
     }
 }

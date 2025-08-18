@@ -61,6 +61,15 @@ export class CareService {
     await this.careRepository.update(id, careDto);
     return this.findOneCare(id);
   }
+  async softDeleteCare(id: number): Promise<Care> {
+    const care = await this.careRepository.findOne({ where: { id } });
+    if (!care) {
+      throw new NotFoundException(`Care with ID ${id} not found`);
+    }
+    care.softDeleted = true;
+    await this.careRepository.save(care);
+    return care;
+  }
 
   async deleteCare(id: number): Promise<void> {
     const careToRemove = await this.careRepository.delete(id);

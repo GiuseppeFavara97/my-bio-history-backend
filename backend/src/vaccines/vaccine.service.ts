@@ -49,6 +49,16 @@ export class VaccineService {
         await this.vaccineRepository.update(id, vaccineDto);
         return this.findVaccineById(id);
     }
+
+    async softDeleteVaccine(id: number): Promise<Vaccine> {
+        const vaccine = await this.findVaccineById(id);
+        if (!vaccine) {
+            throw new NotFoundException(`Vaccine with ID ${id} not found`);
+        }
+        vaccine.softDeleted = true;
+        return this.vaccineRepository.save(vaccine);
+    }
+
     async deleteVaccine(id: number): Promise<void> {
         const result = await this.vaccineRepository.delete(id);
         if (result.affected === 0) {

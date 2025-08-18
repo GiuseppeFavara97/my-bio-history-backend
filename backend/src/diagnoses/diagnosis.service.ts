@@ -64,6 +64,16 @@ export class DiagnosisService {
     return this.findOneDiagnosis(id);
   }
 
+
+  async softDeleteDiagnosis(id: number): Promise<Diagnosis> {
+    const diagnosis = await this.diagnosisRepository.findOne({ where: { id } });
+    if (!diagnosis) {
+      throw new NotFoundException(`Diagnosis with ID ${id} not found`);
+    }
+    diagnosis.softDeleted = true;
+    await this.diagnosisRepository.save(diagnosis);
+    return diagnosis;
+  }
   async removeDiagnosis(id: number): Promise<void> {
     const remove = await this.diagnosisRepository.delete(id);
     if (remove.affected === 0) {

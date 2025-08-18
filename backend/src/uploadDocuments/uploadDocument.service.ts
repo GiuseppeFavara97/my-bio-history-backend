@@ -52,6 +52,15 @@ export class UploadDocumentService {
         return this.findDocumentById(id);
     }
 
+<<<<<<< HEAD
+    async softDeleteDocument(id: number): Promise<UploadDocument> {
+        const document = await this.findDocumentById(id);
+        document.softDeleted = true;
+        return this.documentRepository.save(document);
+    }
+
+=======
+>>>>>>> main
     async deleteDocument(id: number): Promise<void> {
         const result = await this.documentRepository.delete(id);
         if (result.affected === 0) {

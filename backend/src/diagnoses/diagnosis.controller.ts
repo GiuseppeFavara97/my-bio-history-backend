@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Patch } from '@nestjs/common';
 import { DiagnosisService } from './diagnosis.service';
 import { DiagnosisDto } from './dto/diagnosis.dto';
 
@@ -30,5 +30,11 @@ export class DiagnosisController {
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.diagnosisService.removeDiagnosis(id);
+  }
+
+  @Patch(':id')
+  softDeleted(@Param('id') id: number) {
+    return this.diagnosisService.softDeleteDiagnosis(id);
+
   }
 }

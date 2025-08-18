@@ -29,6 +29,9 @@ export class Allergy {
     @UpdateDateColumn()
     updatedAt: Date;
 
+    @Column ({ default: false })
+    softDeleted: boolean;
+
     @ManyToOne(() => Patient, (patient) => patient.allergies)
     @JoinColumn({ name: "patient_id" })
     patient: Patient;

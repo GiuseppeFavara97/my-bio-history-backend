@@ -52,6 +52,16 @@ export class AllergyService {
         return this.findAllergyById(id);
     }
 
+    async softDeleteAllergy(id: number): Promise<Allergy> {
+      const allergy = await this.allergyRepository.findOne({ where: { id } });
+      if (!allergy) {
+        throw new NotFoundException(`Pathology with ID ${id} not found`);
+      }
+      allergy.softDeleted = true;
+      await this.allergyRepository.save(allergy);
+      return allergy;
+    }
+    
     async deleteAllergy(id: number): Promise<void> {
         const result = await this.allergyRepository.delete(id);
         if (result.affected === 0) {

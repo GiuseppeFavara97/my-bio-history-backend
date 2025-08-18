@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Delete, Patch } from '@nestjs/common';
 import { CareService } from './care.service';
 import { CareDto } from './dto/care.dto';
 
@@ -29,5 +29,10 @@ export class CareController {
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.careService.deleteCare(id);
+  }
+
+  @Patch(':id')
+  softDelete(@Param('id') id: number) {
+    return this.careService.softDeleteCare(id);
   }
 }

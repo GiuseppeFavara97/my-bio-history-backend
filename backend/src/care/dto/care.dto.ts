@@ -6,12 +6,10 @@ export class CareDto {
     name: string;
     description: string;
 
-
     @IsNumber()
     duration_days: number;
     daily_frequency: number;
     diagnosisId: number;
     doctorId: number;
     patientId: number;
-
 }
