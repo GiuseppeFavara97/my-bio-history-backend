@@ -3,7 +3,6 @@ import { DiagnosisDto } from './dto/diagnosis.dto';
 import { Diagnosis } from './diagnosis.entity'
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Pathology } from 'src/pathologies/pathology.entity';
 import { Doctor } from 'src/doctors/doctor.entity';
 import { Patient } from 'src/patients/patient.entity';
 

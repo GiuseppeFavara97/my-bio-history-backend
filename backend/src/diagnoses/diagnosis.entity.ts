@@ -1,7 +1,6 @@
 import { Care } from "src/care/care.entity";
 import { Doctor } from "src/doctors/doctor.entity";
 import { MedicalRecord } from "src/medicalRecords/medical.entity";
-import { Pathology } from "src/pathologies/pathology.entity";
 import { Patient } from "src/patients/patient.entity";
 import { Entity, PrimaryGeneratedColumn, JoinColumn, Column, OneToMany, ManyToOne, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
@@ -11,16 +10,15 @@ export class Diagnosis {
     id: number;
 
     @Column({ nullable: true })
+    pathologyName: string;
+
+    @Column({ nullable: true })
     description: string;
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
-
-    /*@ManyToOne(() => Pathology, (pathology) => pathology.diagnosis)
-    pathology: Pathology;
-    */
 
     @ManyToOne(() => Doctor, (doctor) => doctor.diagnosis)
     @JoinColumn({ name: "doctor_id" })
