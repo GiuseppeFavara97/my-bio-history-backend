@@ -61,12 +61,10 @@ export class User {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @OneToOne(() => Patient, patient => patient.user, { cascade: true })
-    @JoinColumn({ name: 'patient_id' })
-    patient?: Patient;
+    @OneToOne(() => Patient, patient => patient.user)
+    patient: Patient;
 
-    @OneToOne(() => Doctor, doctor => doctor.user, { cascade: true })
-    @JoinColumn({ name: 'doctor_id' })
-    doctor?: Doctor;
+    @OneToOne(() => Doctor, doctor => doctor.user)
+    doctor: Doctor;
 
 }

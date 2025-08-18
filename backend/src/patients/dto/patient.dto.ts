@@ -3,9 +3,6 @@ import { IsNotEmpty, IsEmpty } from 'class-validator';
 
 export class PatientDto {
 
-    @Exclude()
-    user: any;
-
     @IsEmpty()
     mainPatientId: number;
 

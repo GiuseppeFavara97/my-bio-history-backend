@@ -3,9 +3,7 @@ import { DoctorDto } from './dto/doctor.dto';
 import { Doctor } from './doctor.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../users/user.entity';
-
-
+import { Patient } from '../patients/patient.entity';
 
 @Injectable()
 export class DoctorService {
@@ -17,7 +15,6 @@ export class DoctorService {
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>
   ) { }
-
 
   async createDoctor(doctorDto: DoctorDto): Promise<Doctor> {
     const doctor = this.doctorRepository.create(doctorDto);
@@ -63,5 +60,16 @@ export class DoctorService {
     return this.findDoctorsById(id);
   }
 
-  
+  async findPatientsByDoctor(doctorId: number): Promise<Patient[]> {
+    const doctor = await this.doctorRepository.findOne({
+      where: { id: doctorId },
+      relations: ['patients', 'patients.medicalRecord'], // relazione per accedere ai record medici dei pazienti
+    });
+
+    if (!doctor) {
+      throw new NotFoundException(`Doctor with ID ${doctorId} not found`);
+    }
+
+    return doctor.patients;
+  }
 }

@@ -11,5 +11,7 @@ export class CareDto {
     duration_days: number;
     daily_frequency: number;
     diagnosisId: number;
+    doctorId: number;
+    patientId: number;
 
 }

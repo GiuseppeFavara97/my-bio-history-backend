@@ -1,5 +1,8 @@
-import { Diagnosis } from "src/diagnoses/diagnosis.entity";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { MedicalRecord } from "src/medicalRecords/medical.entity";
+import { Diagnosis } from "src/diagnoses/diagnosis.entity";
+import { Doctor } from "src/doctors/doctor.entity";
+import { Patient } from "src/patients/patient.entity";
 
 
 @Entity("care")
@@ -7,8 +10,6 @@ export class Care {
 
     @PrimaryGeneratedColumn()
     id: number;
-
-    // @ManyToOne.
 
     @Column({ nullable: true })
     name: string;
@@ -26,6 +27,18 @@ export class Care {
     daily_frequency: number;
 
     @ManyToOne(() => Diagnosis, (diagnosis) => diagnosis.care)
-    @JoinColumn({ name: 'diagnosis_id' })
+    @JoinColumn({ name: "diagnosis_id" })
     diagnosis: Diagnosis;
+
+    @ManyToOne(() => MedicalRecord, medicalRecord => medicalRecord.cares)
+    @JoinColumn({ name: "medical_record_id" })
+    medicalRecord: MedicalRecord;
+
+    @ManyToOne(() => Doctor, doctor => doctor.cares)
+    @JoinColumn({ name: "doctor_id" })
+    doctor: Doctor;
+
+    @ManyToOne(() => Patient, (patient) => patient.cares)
+    @JoinColumn({ name: "patient_id" })
+    patient: Patient;
 }

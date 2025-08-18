@@ -99,13 +99,11 @@ export class UserService {
                 break;
             }
 
-        a++;
+            a++;
+        }
+
+        return Genusername;
     }
-
-    return Genusername;
-}
-
-
     generateTaxCode(dto: UserDto): string {
         const { firstName, lastName, birthday, birthdayPlace, sex } = dto;
         const vowels = 'AEIOU';
@@ -199,12 +197,8 @@ export class UserService {
 
             const dayCode = day.toString().padStart(2, '0');
 
-
             return `${year}${month}${dayCode}`;
-
-
         };
-
 
         const calculateControlChar = (code: string) => {
             const evenMap: Record<string, number> = {
@@ -304,7 +298,6 @@ export class UserService {
             throw new NotFoundException(`Codice catastale non trovato per il comune: ${birthdayPlace}`);
         }
 
-
         return (
             codeLastName(lastName) +
             codeFirstName(firstName) +
@@ -341,22 +334,21 @@ export class UserService {
         return this.findUserById(id);
     }
 
-     async softDeleteUser(id: number): Promise<User> {
+    async softDeleteUser(id: number): Promise<User> {
         const user = await this.findUserById(id);
-    if (!user) {
-        throw new NotFoundException(`User with ID ${id} not found`);
-    } else {
-        await this.userRepository.update(id, { softDeleted: true });
-        if (user.role === UserRole.DOCTOR) {
-            await this.doctorRepository.update({user: {id: user.id}}, { deleted: true }); 
-        } else if (user.role === UserRole.PATIENT) {
-            await this.patientRepository.update({user: {id: user.id}}, { deleted: true }); 
+        if (!user) {
+            throw new NotFoundException(`User with ID ${id} not found`);
+        } else {
+            await this.userRepository.update(id, { softDeleted: true });
+            if (user.role === UserRole.DOCTOR) {
+                await this.doctorRepository.update({ user: { id: user.id } }, { deleted: true });
+            } else if (user.role === UserRole.PATIENT) {
+                await this.patientRepository.update({ user: { id: user.id } }, { deleted: true });
+            }
+
+            return this.findUserById(id); // Return the user object after marking it as deleted
         }
-
-    return this.findUserById(id); // Return the user object after marking it as deleted
     }
-    }
-
 
     async findOne(email: string, password: string): Promise<User | undefined> {
         // logica per trovare l'utente

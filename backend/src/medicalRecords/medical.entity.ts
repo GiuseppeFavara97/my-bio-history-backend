@@ -16,6 +16,7 @@ import { Allergy } from "../allergies/allergy.entity";
 import { Vaccine } from "../vaccines/vaccine.entity";
 import { Diagnosis } from "../diagnoses/diagnosis.entity";
 import { Patient } from "src/patients/patient.entity";
+import { Care } from "src/care/care.entity";
 
 
 @Entity("medicalRecords")
@@ -29,29 +30,28 @@ export class MedicalRecord {
     @DeleteDateColumn()
     deletedAt: Date;
 
-    @Column({ default: false})
+    @Column({ default: false })
     softDeleted: boolean;
 
     @UpdateDateColumn()
     updateAt: Date;
-
-    @OneToMany(() => Doctor, (doctor) => doctor.medicalRecord)
-    doctor: Doctor[];
 
     @OneToOne(() => Patient, (patient) => patient.medicalRecord)
     @JoinColumn({ name: 'patient_id' })
     patient: Patient;
 
     @OneToMany(() => UploadDocument, (uploadDocument) => uploadDocument.medicalRecord)
-    uploadDocument: UploadDocument[];
+    uploadDocuments: UploadDocument[];
 
-    @OneToMany(() => Allergy, (allergy) => allergy.medicalRecords)
-    allergy: Allergy[];
+    @OneToMany(() => Allergy, (allergy) => allergy.medicalRecord)
+    allergies: Allergy[];
 
     @OneToMany(() => Vaccine, (vaccine) => vaccine.medicalRecord)
-    vaccine: Vaccine[];
+    vaccines: Vaccine[];
 
     @OneToMany(() => Diagnosis, (diagnosis) => diagnosis.medicalRecords)
-    diagnosis: Diagnosis[];
-    
+    diagnoses: Diagnosis[];
+
+    @OneToMany(() => Care, (care) => care.medicalRecord)
+    cares: Care[];
 }

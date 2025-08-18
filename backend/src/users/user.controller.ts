@@ -9,23 +9,25 @@ import { Roles } from 'src/auth/roles.decorator';
 import { UserRole } from './enum/userRole.enum';
 import { User } from './user.entity';
 
-
 @Controller('users')
 export class UserController {
     constructor(private userService: UserService) { }
+
     @Public()
     @Post('create')
     async createUser(@Body() userDto: UserDto): Promise<any> {
         const user = await this.userService.createUser(userDto);
         return instanceToPlain(user);
     }
-    @UseGuards(AuthGuard , RolesGuard)
+
+    @UseGuards(AuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
     @Get()
     async findAllUsers(): Promise<any> {
         const users = await this.userService.findAllUsers();
         return instanceToPlain(users);
     }
+
     @Public()
     @Get(':id')
     async findUserById(@Param('id') id: number): Promise<any> {
@@ -37,6 +39,7 @@ export class UserController {
     async updateUser(@Param('id') id: number, @Body() userDto: UserDto): Promise<any> {
         return this.userService.updateUser(id, userDto);
     }
+
     @Public()
     @Delete(':id')
     async deleteUser(@Param('id') id: number): Promise<User> {

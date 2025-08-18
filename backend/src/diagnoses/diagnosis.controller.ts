@@ -9,31 +9,32 @@ export class DiagnosisController {
 
   @Post('create')
   create(@Body() diagnosisDto: DiagnosisDto) {
-    return this.diagnosisService.creatediagnosis(diagnosisDto);
+    return this.diagnosisService.createDiagnosis(diagnosisDto);
   }
 
-  @Get('all')
+  @Get()
   findAll() {
-    return this.diagnosisService.findAlldiagnosis();
+    return this.diagnosisService.findAllDiagnosis();
   }
 
   @Get(':id')
   findOne(@Param('id') id: number) {
-    return this.diagnosisService.findOnediagnosis(+id);
+    return this.diagnosisService.findOneDiagnosis(id);
   }
 
   @Put(':id')
   update(@Param('id') id: number, @Body() diagnosisDto: DiagnosisDto) {
-    return this.diagnosisService.updatediagnosis(+id, diagnosisDto);
+    return this.diagnosisService.updateDiagnosis(id, diagnosisDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: number) {
-    return this.diagnosisService.removediagnosis(id);
+    return this.diagnosisService.removeDiagnosis(id);
   }
 
   @Patch(':id')
   softDeleted(@Param('id') id: number) {
     return this.diagnosisService.softDeleteDiagnosis(id);
+
   }
 }

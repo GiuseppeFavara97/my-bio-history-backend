@@ -21,12 +21,12 @@ export class DoctorController {
 
   @Get(':id')
   findOne(@Param('id') id: number): Promise<Doctor> {
-    return this.doctorService.findDoctorsById(+id);
+    return this.doctorService.findDoctorsById(id);
   }
 
   @Put(':id')
   update(@Param('id') id: number, @Body() doctorDto: DoctorDto): Promise<Doctor> {
-    return this.doctorService.updateDoctor(+id, doctorDto);
+    return this.doctorService.updateDoctor(id, doctorDto);
   }
 
   @Delete(':id')

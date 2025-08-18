@@ -36,8 +36,8 @@ export class Allergy {
     @JoinColumn({ name: "patient_id" })
     patient: Patient;
 
-    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.allergy)
-    @JoinColumn({ name: "medicalRecords_id" })
-    medicalRecords: MedicalRecord;
+    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.allergies)
+    @JoinColumn({ name: "medicalRecord_id" })
+    medicalRecord: MedicalRecord;
 
 }
