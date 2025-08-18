@@ -12,6 +12,9 @@ export class Diagnosis {
     @Column({ nullable: true })
     description: string;
 
+    @Column ({default: false})
+    softDeleted: boolean;
+
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;
     @UpdateDateColumn({ type: 'timestamp' })

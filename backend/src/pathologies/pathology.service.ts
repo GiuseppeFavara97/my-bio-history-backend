@@ -33,6 +33,16 @@ export class PathologyService {
     return this.findOnepatho(id);
   }
 
+async softDeletePatho(id: number): Promise<Pathology> {
+  const pathology = await this.pathologyRepository.findOne({ where: { id } });
+  if (!pathology) {
+    throw new NotFoundException(`Pathology with ID ${id} not found`);
+  }
+  pathology.softDeleted = true;
+  await this.pathologyRepository.save(pathology);
+  return pathology;
+}
+
   async removepatho(id: number): Promise<void> {
     const pathotoremove = await this.pathologyRepository.delete(id);
     if (pathotoremove.affected === 0) {

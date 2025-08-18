@@ -19,6 +19,9 @@ export class Vaccine {
     @Column({ nullable: true })
     note: string;
 
+    @Column ({default: false})
+    softDeleted: boolean;
+
     @ManyToOne(() => Patient, (patient) => patient.vaccines)
     @JoinColumn({ name: 'patient_id' })
     patient: Patient;

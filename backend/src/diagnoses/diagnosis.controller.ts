@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Patch } from '@nestjs/common';
 import { DiagnosisService } from './diagnosis.service';
 import { DiagnosisDto } from './dto/diagnosis.dto';
 
@@ -18,17 +18,22 @@ export class DiagnosisController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.diagnosisService.findOnediagnosis(+id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() diagnosisDto: DiagnosisDto) {
+  update(@Param('id') id: number, @Body() diagnosisDto: DiagnosisDto) {
     return this.diagnosisService.updatediagnosis(+id, diagnosisDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.diagnosisService.removediagnosis(+id);
+  remove(@Param('id') id: number) {
+    return this.diagnosisService.removediagnosis(id);
+  }
+
+  @Patch(':id')
+  softDeleted(@Param('id') id: number) {
+    return this.diagnosisService.softDeleteDiagnosis(id);
   }
 }

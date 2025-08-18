@@ -7,14 +7,22 @@ export class UploadDocument {
 
     @PrimaryGeneratedColumn()
     id: number;
+
     @Column({ nullable: true })
     name: string;
+
     @Column({ nullable: true })
     type: string;
+
     @Column({ nullable: true })
     size: number;
+
     @Column({ nullable: true })
     url: string;
+
+    @Column({ default: false })
+    softDeleted: boolean;
+
     @Column({ nullable: true })
     @CreateDateColumn()
     createdAt: Date

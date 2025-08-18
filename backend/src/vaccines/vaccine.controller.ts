@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Patch } from '@nestjs/common';
 import { VaccineService } from './vaccine.service';
 import { Vaccine } from './vaccine.entity';
 import { VaccineDto } from './dto/vaccine.dto';
@@ -27,4 +27,9 @@ export class VaccineController {
     async deleteVaccine(@Param('id') id: number): Promise<void> {
         return this.vaccineService.deleteVaccine(id);
     }
+
+    @Patch(':id')
+    async softDeleteVaccine(@Param('id') id: number): Promise<Vaccine> {
+        return this.vaccineService.softDeleteVaccine(id);
+    }   
 }

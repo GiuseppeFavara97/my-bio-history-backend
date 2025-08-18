@@ -1,5 +1,5 @@
 
-import { Controller, Post, Get, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Body, Param, Patch} from '@nestjs/common';
 import { AllergyService } from './allergy.service';
 import { Allergy } from './allergy.entity';
 import { AllergyDto } from './dto/allergy.dto';
@@ -31,5 +31,10 @@ export class AllergyController {
     @Delete(':id')
     async deleteAllergy(@Param('id') id: number): Promise<void> {
         return this.allergyService.deleteAllergy(id);
+    }
+
+    @Patch(':id')
+    async softDeleteAllergy(@Param('id') id: number): Promise<Allergy> {
+        return this.allergyService.softDeleteAllergy(id);
     }
 }

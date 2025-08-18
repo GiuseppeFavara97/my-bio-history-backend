@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Patch } from '@nestjs/common';
 import { PathologyService } from './pathology.service';
 import { PathologyDto } from './dto/pathology.dto';
 
@@ -18,17 +18,22 @@ export class PathologyController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.pathologyService.findOnepatho(+id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() pathologyDto: PathologyDto) {
+  update(@Param('id') id: number, @Body() pathologyDto: PathologyDto) {
     return this.pathologyService.updatepatho(+id, pathologyDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.pathologyService.removepatho(+id);
+  }
+
+  @Patch(':id')
+  softDelete(@Param('id') id: number) {
+    return this.pathologyService.softDeletePatho(+id);
   }
 }

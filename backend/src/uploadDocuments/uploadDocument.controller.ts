@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Patch } from '@nestjs/common';
 import { UploadDocumentService } from './uploadDocument.service';
 import { UploadDocument } from './uploadDocument.entity';
 import { UploadDocumentDto } from './dto/uploadDocument.dto';
@@ -26,4 +26,9 @@ export class UploadDocumentController {
     async deleteDocument(@Param('id') id: number): Promise<void> {
         return this.uploadDocumentService.deleteDocument(id);
     }
+
+    @Patch(':id')
+    async softDeleteDocument(@Param('id') id: number): Promise<UploadDocument> {
+        return this.uploadDocumentService.softDeleteDocument(id);
+    }   
 }

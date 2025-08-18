@@ -8,6 +8,7 @@ import {
     DeleteDateColumn,
     OneToOne,
     JoinColumn
+
 } from "typeorm";
 import { Doctor } from "../doctors/doctor.entity";
 import { UploadDocument } from "../uploadDocuments/uploadDocument.entity";
@@ -15,6 +16,7 @@ import { Allergy } from "../allergies/allergy.entity";
 import { Vaccine } from "../vaccines/vaccine.entity";
 import { Diagnosis } from "../diagnoses/diagnosis.entity";
 import { Patient } from "src/patients/patient.entity";
+
 
 @Entity("medicalRecords")
 export class MedicalRecord {
@@ -26,6 +28,9 @@ export class MedicalRecord {
 
     @DeleteDateColumn()
     deletedAt: Date;
+
+    @Column({ default: false})
+    softDeleted: boolean;
 
     @UpdateDateColumn()
     updateAt: Date;
@@ -48,4 +53,5 @@ export class MedicalRecord {
 
     @OneToMany(() => Diagnosis, (diagnosis) => diagnosis.medicalRecords)
     diagnosis: Diagnosis[];
+    
 }

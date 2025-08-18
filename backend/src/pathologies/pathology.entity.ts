@@ -13,6 +13,9 @@ export class Pathology {
     @Column({ nullable: true })
     type: number;
 
+    @Column ({default: false})
+    softDeleted: boolean;
+
     @Column({ nullable: true })
     description: string;
 
