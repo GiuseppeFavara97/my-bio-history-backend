@@ -34,7 +34,6 @@ export class Doctor {
 
     @OneToOne(() => User, user => user.doctor)
     @JoinColumn({ name: 'user_id' })
-    @Exclude()
     user: User;
 
     @OneToMany(() => Diagnosis, diagnosis => diagnosis.doctor)
