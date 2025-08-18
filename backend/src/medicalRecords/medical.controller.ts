@@ -18,6 +18,11 @@ export class MedicalRecordController {
         return this.medicalRecordService.findAllMedicalRecords();
     }
 
+    @Get('patient/:patientId')
+    async getFullMedicalRecordByPatientId(@Param('patientId') patientId: number): Promise<MedicalRecord> {
+        return this.medicalRecordService.getFullMedicalRecordByPatientId(patientId);
+    }
+
     @Get(':id')
     async findMedicalRecordById(@Param('id') id: number): Promise<MedicalRecord> {
         return this.medicalRecordService.findMedicalRecordById(id);
