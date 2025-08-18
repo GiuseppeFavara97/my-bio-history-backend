@@ -23,7 +23,7 @@ export class Vaccine {
     @JoinColumn({ name: 'patient_id' })
     patient: Patient;
 
-    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.vaccine)
+    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.vaccines)
     @JoinColumn({ name: 'medicalRecord_id' })
     medicalRecord: MedicalRecord;
 }

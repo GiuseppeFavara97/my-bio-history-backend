@@ -9,22 +9,23 @@ import { Patient } from '../patients/patient.entity'; // Assuming you have a Pat
 export class MedicalRecordService {
     constructor(
         @InjectRepository(MedicalRecord)
-        private medicalRepository: Repository<MedicalRecord>,
+        private medicalRecordRepository: Repository<MedicalRecord>,
+
     ) { }
 
     async createMedicalRecord(medicalRecordDto: MedicalRecordDto): Promise<MedicalRecord> {
-        const medicalRecord: MedicalRecord = this.medicalRepository.create({
+        const medicalRecord: MedicalRecord = this.medicalRecordRepository.create({
             patient: { id: medicalRecordDto.patientId } as Patient
         });
-        return this.medicalRepository.save(medicalRecord);
+        return this.medicalRecordRepository.save(medicalRecord);
     }
 
     async findAllMedicalRecords(): Promise<MedicalRecord[]> {
-        return this.medicalRepository.find();
+        return this.medicalRecordRepository.find();
     }
 
     async findMedicalRecordById(id: number): Promise<MedicalRecord> {
-        const medicalRecord = await this.medicalRepository.findOne({ where: { id } });
+        const medicalRecord = await this.medicalRecordRepository.findOne({ where: { id } });
         if (!medicalRecord) {
             throw new NotFoundException(`Medical_Records with ID ${id} not found`);
         }
@@ -32,16 +33,35 @@ export class MedicalRecordService {
     }
 
     async updateMedicalRecord(id: number, medicalRecordDto: MedicalRecordDto): Promise<MedicalRecord> {
-        await this.medicalRepository.update(id, {
+        await this.medicalRecordRepository.update(id, {
             patient: { id: medicalRecordDto.patientId }
         });
         return this.findMedicalRecordById(id);
     }
 
     async deleteMedicalRecord(id: number): Promise<void> {
-        const result = await this.medicalRepository.delete(id);
+        const result = await this.medicalRecordRepository.delete(id);
         if (result.affected === 0) {
             throw new NotFoundException(`Medical_Records with ID ${id} not found`);
         }
     }
+    async getFullMedicalRecordByPatientId(patientId: number): Promise<MedicalRecord> {
+        const medicalRecord = await this.medicalRecordRepository.findOne({
+            where: { patient: { id: patientId } },
+            relations: [
+                'patient',
+                'cares',
+                'vaccines',
+                'allergies',
+                'diagnoses',
+            ],
+        });
+
+        if (!medicalRecord) {
+            throw new NotFoundException(`Medical record for patient ${patientId} not found`);
+        }
+
+        return medicalRecord;
+    }
+
 }

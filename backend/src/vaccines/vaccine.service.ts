@@ -3,16 +3,37 @@ import { Vaccine } from './vaccine.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { VaccineDto } from './dto/vaccine.dto';
+import { Patient } from 'src/patients/patient.entity';
 
 @Injectable()
 export class VaccineService {
     constructor(
         @InjectRepository(Vaccine)
         private vaccineRepository: Repository<Vaccine>,
+        @InjectRepository(Patient)
+        private patientRepository: Repository<Patient>,
     ) { }
     async createVaccine(vaccineDto: VaccineDto): Promise<Vaccine> {
-        const vaccine = this.vaccineRepository.create(vaccineDto);
-        return this.vaccineRepository.save(vaccine);
+        const patient = await this.patientRepository.findOne({
+            where: { id: vaccineDto.patientId },
+            relations: ["medicalRecord"]
+        });
+
+        if (!patient) {
+            throw new NotFoundException(`Patient with ID ${vaccineDto.patientId} not found`);
+        }
+
+        const vaccine = this.vaccineRepository.create({
+            name: vaccineDto.name,
+            vaccinationDate: vaccineDto.vaccinationDate,
+            type: vaccineDto.type,
+            note: vaccineDto.note,
+            patient: { id: patient.id },
+            medicalRecord: { id: patient.medicalRecord.id }
+        });
+
+        await this.vaccineRepository.save(vaccine);
+        return vaccine;
     }
     async findAllVaccines(): Promise<Vaccine[]> {
         return this.vaccineRepository.find();

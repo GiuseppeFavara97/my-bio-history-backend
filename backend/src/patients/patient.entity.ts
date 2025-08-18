@@ -7,7 +7,9 @@ import {
     DeleteDateColumn,
     OneToMany,
     JoinColumn,
-    OneToOne
+    OneToOne,
+    ManyToMany,
+    ManyToOne
 } from 'typeorm';
 
 import { User } from '../users/user.entity';
@@ -15,7 +17,9 @@ import { Allergy } from '../allergies/allergy.entity';
 import { Vaccine } from '../vaccines/vaccine.entity';
 import { UploadDocument } from '../uploadDocuments/uploadDocument.entity';
 import { MedicalRecord } from '../medicalRecords/medical.entity';
-import { Exclude } from 'class-transformer';
+import { Doctor } from 'src/doctors/doctor.entity';
+import { Diagnosis } from 'src/diagnoses/diagnosis.entity';
+import { Care } from 'src/care/care.entity';
 
 @Entity("patients")
 export class Patient {
@@ -59,11 +63,18 @@ export class Patient {
     uploadDocuments: UploadDocument[];
 
     @OneToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.patient)
-    @JoinColumn({ name: 'medicalRecord_id' })
     medicalRecord: MedicalRecord;
 
     @OneToOne(() => User, user => user.patient)
     @JoinColumn({ name: 'userId' })
-    @Exclude()
     user: User;
+
+    @ManyToMany(() => Doctor, (doctor) => doctor.patients)
+    doctors: Doctor[];
+
+    @OneToMany(() => Diagnosis, (diagnosis) => diagnosis.patient)
+    diagnoses: Diagnosis[];
+
+    @OneToMany(() => Care, (care) => care.patient)
+    cares: Care[];
 }

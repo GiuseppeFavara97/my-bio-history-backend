@@ -1,8 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, ManyToOne, JoinColumn } from "typeorm";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    OneToMany,
+    OneToOne,
+    ManyToOne,
+    ManyToMany,
+    JoinColumn,
+    JoinTable
+} from "typeorm";
+
+import { Exclude } from "class-transformer";
+import { Patient } from "src/patients/patient.entity";
 import { User } from "../users/user.entity";
 import { Diagnosis } from "src/diagnoses/diagnosis.entity";
-import { MedicalRecord } from "src/medicalRecords/medical.entity";
-import { Exclude } from "class-transformer";
+import { Care } from "src/care/care.entity";
 
 
 
@@ -22,14 +34,15 @@ export class Doctor {
 
     @OneToOne(() => User, user => user.doctor)
     @JoinColumn({ name: 'user_id' })
-    @Exclude()
     user: User;
 
     @OneToMany(() => Diagnosis, diagnosis => diagnosis.doctor)
     diagnosis: Diagnosis[];
 
-    @ManyToOne(() => MedicalRecord, medicalRecord => medicalRecord.doctor)
-    @JoinColumn({ name: 'medicalRecord_id' })
-    medicalRecord: MedicalRecord;
+    @ManyToMany(() => Patient, (patient) => patient.doctors)
+    @JoinTable()
+    patients: Patient[];
 
+    @OneToMany(() => Care, care => care.doctor)
+    cares: Care[];
 }
