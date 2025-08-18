@@ -8,26 +8,26 @@ export class CareController {
 
   @Post('create')
   create(@Body() careDto: CareDto) {
-    return this.careService.createcare(careDto);
+    return this.careService.createCare(careDto);
   }
 
   @Get()
   findAll() {
-    return this.careService.findAllcare();
+    return this.careService.findAllCare();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.careService.findOnecare(+id);
+    return this.careService.findOneCare(+id);
   }
 
   @Put(':id')
   update(@Param('id') id: string, @Body() careDto: CareDto) {
-    return this.careService.updatecare(+id, careDto);
+    return this.careService.updateCare(+id, careDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.careService.removecare(+id);
+    return this.careService.deleteCare(+id);
   }
 }
