@@ -1,5 +1,5 @@
 
-import { Controller, Post, Get, Put, Delete, Body, Param, Patch} from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Body, Param, Patch } from '@nestjs/common';
 import { MedicalRecordService } from './medical.service';
 import { MedicalRecord } from './medical.entity';
 import { MedicalRecordDto } from './dto/medicalRecord.dto';
@@ -29,8 +29,8 @@ export class MedicalRecordController {
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() medicalRecordDto: MedicalRecordDto): Promise<MedicalRecord> {
-        return this.medicalRecordService.updateMedicalRecord(+id, medicalRecordDto);
+    update(@Param('id') id: number, @Body() medicalRecordDto: MedicalRecordDto): Promise<MedicalRecord> {
+        return this.medicalRecordService.updateMedicalRecord(id, medicalRecordDto);
     }
 
     @Patch(':id')

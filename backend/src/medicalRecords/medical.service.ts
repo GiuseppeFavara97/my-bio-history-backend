@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MedicalRecordDto } from './dto/medicalRecord.dto';
 import { Patient } from '../patients/patient.entity'; // Assuming you have a Patient entity
-import {User} from "../users/user.entity";
+import { User } from "../users/user.entity";
 
 @Injectable()
 export class MedicalRecordService {
@@ -34,15 +34,16 @@ export class MedicalRecordService {
     }
 
     async softDeleteMedical(id: number): Promise<MedicalRecord> {
-    const medicalRecord = await this.medicalRepository.findOne({
-      where: { id }});
-    if (!medicalRecord) throw new NotFoundException(`Patient not found`);
-    await this.medicalRepository.update(id, {
-        softDeleted: true
-    });
-    medicalRecord.softDeleted = true;
-    return medicalRecord;
-  }
+        const medicalRecord = await this.medicalRecordRepository.findOne({
+            where: { id }
+        });
+        if (!medicalRecord) throw new NotFoundException(`Patient not found`);
+        await this.medicalRecordRepository.update(id, {
+            softDeleted: true
+        });
+        medicalRecord.softDeleted = true;
+        return medicalRecord;
+    }
 
     async updateMedicalRecord(id: number, medicalRecordDto: MedicalRecordDto): Promise<MedicalRecord> {
         await this.medicalRecordRepository.update(id, {
@@ -57,6 +58,7 @@ export class MedicalRecordService {
             throw new NotFoundException(`Medical_Records with ID ${id} not found`);
         }
     }
+
     async getFullMedicalRecordByPatientId(patientId: number): Promise<MedicalRecord> {
         const medicalRecord = await this.medicalRecordRepository.findOne({
             where: { patient: { id: patientId } },
@@ -75,5 +77,4 @@ export class MedicalRecordService {
 
         return medicalRecord;
     }
-
 }
