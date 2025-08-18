@@ -10,13 +10,10 @@ import {
     JoinTable
 } from "typeorm";
 
-import { Exclude } from "class-transformer";
 import { Patient } from "src/patients/patient.entity";
 import { User } from "../users/user.entity";
 import { Diagnosis } from "src/diagnoses/diagnosis.entity";
 import { Care } from "src/care/care.entity";
-
-
 
 @Entity("doctors")
 export class Doctor {

@@ -5,8 +5,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Patient } from '../patients/patient.entity';
 
-
-
 @Injectable()
 export class DoctorService {
   removeDoctor(id: string): Promise<void> {
@@ -17,7 +15,6 @@ export class DoctorService {
     @InjectRepository(Doctor)
     private doctorRepository: Repository<Doctor>
   ) { }
-
 
   async createDoctor(doctorDto: DoctorDto): Promise<Doctor> {
     const doctor = this.doctorRepository.create(doctorDto);

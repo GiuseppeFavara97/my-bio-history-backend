@@ -17,17 +17,17 @@ export class CareController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.careService.findOneCare(+id);
+  findOne(@Param('id') id: number) {
+    return this.careService.findOneCare(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() careDto: CareDto) {
-    return this.careService.updateCare(+id, careDto);
+  update(@Param('id') id: number, @Body() careDto: CareDto) {
+    return this.careService.updateCare(id, careDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.careService.deleteCare(+id);
+  remove(@Param('id') id: number) {
+    return this.careService.deleteCare(id);
   }
 }

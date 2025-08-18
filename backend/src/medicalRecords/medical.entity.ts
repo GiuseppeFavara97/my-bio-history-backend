@@ -31,10 +31,6 @@ export class MedicalRecord {
     @UpdateDateColumn()
     updateAt: Date;
 
-    /*@OneToMany(() => Doctor, (doctor) => doctor.medicalRecord)
-    doctor: Doctor[];
-    */
-
     @OneToOne(() => Patient, (patient) => patient.medicalRecord)
     @JoinColumn({ name: 'patient_id' })
     patient: Patient;

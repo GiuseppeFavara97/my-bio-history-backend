@@ -2,17 +2,15 @@ import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 import { PatientService } from './patient.service';
 import { Patient } from './patient.entity';
 import { PatientDto } from './dto/patient.dto';
-import { User } from 'src/users/user.entity';
-import { publicDecrypt } from 'crypto';
 
 @Controller('patients')
 export class PatientController {
   constructor(private patientService: PatientService) { }
- /* @Post('create')
+  @Post('create')
   async createPatient(@Body() patientDto: PatientDto): Promise<Patient> {
     return this.patientService.createPatient(patientDto);
   }
-    */
+
   @Get()
   async findAllPatients(): Promise<Patient[]> {
     return this.patientService.findAllPatients();
@@ -26,7 +24,7 @@ export class PatientController {
     Patient): Promise<Patient> {
     return this.patientService.updatePatient(id, patientDto);
   }
-  
+
   @Delete(':id')
   async deletePatient(@Param('id') id: number): Promise<Patient> {
     return this.patientService.softDeletePatient(id);
@@ -43,7 +41,7 @@ export class PatientController {
   async findPatientsByFullName(@Param('fullName') fullName: string): Promise<Patient[]> {
     return this.patientService.findPatientsByFullName(fullName);
   }
-  
+
   @Get('relation/:relationToMainPatient')
   async findPatientsByRelationToMainPatient(@Param('relationToMainPatient') relationToMainPatient: string): Promise<Patient[]> {
     return this.patientService.findPatientsByRelationToMainPatient(relationToMainPatient);
