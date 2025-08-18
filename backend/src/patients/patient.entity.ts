@@ -17,9 +17,9 @@ import { Allergy } from '../allergies/allergy.entity';
 import { Vaccine } from '../vaccines/vaccine.entity';
 import { UploadDocument } from '../uploadDocuments/uploadDocument.entity';
 import { MedicalRecord } from '../medicalRecords/medical.entity';
-import { Exclude } from 'class-transformer';
 import { Doctor } from 'src/doctors/doctor.entity';
 import { Diagnosis } from 'src/diagnoses/diagnosis.entity';
+import { Care } from 'src/care/care.entity';
 
 @Entity("patients")
 export class Patient {
@@ -67,12 +67,14 @@ export class Patient {
 
     @OneToOne(() => User, user => user.patient)
     @JoinColumn({ name: 'userId' })
-    @Exclude()
     user: User;
 
     @ManyToMany(() => Doctor, (doctor) => doctor.patients)
     doctors: Doctor[];
 
-    @ManyToOne(() => Diagnosis, (diagnosis) => diagnosis.patient)
+    @OneToMany(() => Diagnosis, (diagnosis) => diagnosis.patient)
     diagnoses: Diagnosis[];
+
+    @OneToMany(() => Care, (care) => care.patient)
+    cares: Care[];
 }
