@@ -28,8 +28,8 @@ export class AuthGuard implements CanActivate {
     ]);
     if (isPublic) return true;
 
-    const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
+    const request = context.switchToHttp().getRequest<Request>();
+    const token = this.extractToken(request);
     if (!token) throw new UnauthorizedException('Token not found');
 
     try {
@@ -44,8 +44,13 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+  private extractToken(request: Request): string | undefined {
+  const cookieToken = (request as any).cookies?.auth_token;
+  if (cookieToken) return cookieToken;
+
+  const auth = request.headers.authorization;
+  if (!auth) return undefined;
+  const [type, token] = auth.split(' ');
+  return type === 'Bearer' ? token : undefined;
   }
 }

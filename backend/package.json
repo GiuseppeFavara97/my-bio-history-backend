@@ -32,6 +32,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "codice-fiscale-js": "^2.3.23",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.6.1",
     "lodash": "^4.17.21",
     "multer": "^2.0.2",
