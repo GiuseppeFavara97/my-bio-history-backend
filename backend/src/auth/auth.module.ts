@@ -7,7 +7,7 @@ import { UserModule } from '../users/user.module';
 import { APP_GUARD, Reflector } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './Jwt.Strategy'; // 👈 aggiungi questo
+
 
 @Module({
   imports: [
@@ -27,9 +27,6 @@ import { JwtStrategy } from './Jwt.Strategy'; // 👈 aggiungi questo
   controllers: [AuthController],
   providers: [
     AuthService,
-    JwtStrategy, // registra la strategia
-    Reflector,
-    ConfigService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard, // 👈 il tuo guard personalizzato (funziona se lo hai scritto correttamente)
@@ -37,4 +34,4 @@ import { JwtStrategy } from './Jwt.Strategy'; // 👈 aggiungi questo
   ],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

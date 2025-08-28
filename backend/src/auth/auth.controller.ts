@@ -46,7 +46,7 @@ export class AuthController {
     }),
   )
   async uploadProfileImage(@UploadedFile() file: Express.Multer.File, @Req() req) {
-    const userId = req.user.sub;
+    const userId = req.user.userId;
     const imageUrl = `/uploads/${file.filename}`;
 
     await this.userService.updateProfileImage(userId, imageUrl); // salva in DB
@@ -60,26 +60,26 @@ export class AuthController {
   @Post('login')
   async signIn(
     @Body() body: { email: string; password: string },
-    @Res ({passthrough: true}) res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
 
-     const {access_token,user} = await this.authService.signIn(body.email, body.password);
-      res.cookie('auth_token', access_token, {
-        httpOnly: true,
-        secure: false,  
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-        });
-      return { user };
+    const { access_token, user } = await this.authService.signIn(body.email, body.password);
+    res.cookie('auth_token', access_token, {
+      httpOnly: true,
+      secure: false, //true solo in produzione
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+    return { user };
 
   }
 
   @UseGuards(AuthGuard)
   @Get('Profile')
   async getProfile(@Request() req) {
-    const userId = req.user?.sub || req.user?.userId;
-    const user = await this.userService.findUserById(userId); // 👈 recupera dal DB
+    const userId = req.user?.sub;
+    const user = await this.userService.findUserById(userId); // recupera dal DB
 
     if (!user) {
       throw new NotFoundException('Utente non trovato');
@@ -92,6 +92,6 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('userID')
   userID(@Req() req) {
-    return {id: req.user.sub, email: req.user.email, role: req.user.role}
+    return { id: req.user.sub, email: req.user.email, role: req.user.role }
   }
 }
