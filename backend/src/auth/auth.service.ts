@@ -5,7 +5,6 @@ import *as bcrypt from 'bcrypt';
 import { User } from 'src/users/user.entity';
 
 @Injectable()
-
 export class AuthService {
   constructor(
     private usersService: UserService,
@@ -17,22 +16,16 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException("invalid credentials");
     }
-    if (user.password === password) {
-      // password in chiaro per test per ora...
-    } else {
-      // questa parte fa il check della pass hashata 
-      const isPasswordValid = await bcrypt.compare(password, user.password);
 
-      if (!isPasswordValid) {
-        throw new UnauthorizedException("Credenziali non valide");
-      }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException("Credenziali non valide");
     }
 
-
-    const payload = { sub: user.id, email: user.email , role: user.role, };
+    const payload = { sub: user.id, email: user.email, role: user.role, };
     return {
       access_token: await this.jwtService.signAsync(payload),
-      user : {
+      user: {
         id: user.id,
         email: user.email,
         role: user.role,

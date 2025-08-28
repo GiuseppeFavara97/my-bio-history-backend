@@ -4,8 +4,7 @@ import { UserDto } from './dto/user.dto';
 import { Public } from 'src/auth/auth.decorator';
 import { instanceToPlain } from 'class-transformer';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Roles } from 'src/auth/roles.decorator';
+import { Roles } from 'src/auth/auth.decorator';
 import { UserRole } from './enum/userRole.enum';
 import { User } from './user.entity';
 
@@ -20,7 +19,7 @@ export class UserController {
         return instanceToPlain(user);
     }
 
-    @UseGuards(AuthGuard, RolesGuard)
+    @UseGuards(AuthGuard)
     @Roles(UserRole.ADMIN)
     @Get()
     async findAllUsers(): Promise<any> {
