@@ -45,4 +45,11 @@ export class UserController {
     async deleteUser(@Param('id') id: number): Promise<User> {
         return this.userService.softDeleteUser(id);
     }
+
+    @Public()
+    @Post('generateTaxCode')
+    async generateTaxCode(@Body() userDto: UserDto): Promise<string> {
+        const taxCode = await this.userService.generateTaxCode(userDto);
+        return taxCode;
+    }
 }
