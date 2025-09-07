@@ -25,6 +25,9 @@ dotenv.config();
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
+       ssl: process.env.DB_SSL === 'require'
+    ? { rejectUnauthorized: false } // se vuoi evitare problemi di CA in dev
+    : false,
       autoLoadEntities: true,
       synchronize: true,
     }),

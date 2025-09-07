@@ -359,4 +359,11 @@ export class UserService {
     async updateProfileImage(id: number, imageUrl: string) {
         return this.userRepository.update({ id }, { profileImageUrl: imageUrl });
     }
+
+    async loggedUser(id: number) {
+        const userData = await this.userRepository.findOne (
+            {where : {id}}
+        )
+        return userData
+    }
 }
