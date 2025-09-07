@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { Public } from 'src/auth/auth.decorator';
@@ -49,5 +49,12 @@ export class UserController {
     async generateTaxCode(@Body() userDto: UserDto): Promise<string> {
         const taxCode = await this.userService.generateTaxCode(userDto);
         return taxCode;
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('user/me')
+    async loggedUser (@Req() req) {
+    return this.userService.loggedUser(req.user.sub)
+
     }
 }
