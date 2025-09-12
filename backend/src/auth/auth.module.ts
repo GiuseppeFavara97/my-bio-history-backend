@@ -7,10 +7,12 @@ import { UserModule } from '../users/user.module';
 import { APP_GUARD, Reflector } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 import { PassportModule } from '@nestjs/passport';
+import { forwardRef } from '@nestjs/common';
 
 
 @Module({
   imports: [
+    forwardRef(() => UserModule),
     ConfigModule.forRoot({ isGlobal: true }),
     UserModule,
     PassportModule, // 👈 necessario per usare Passport
