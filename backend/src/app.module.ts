@@ -22,6 +22,7 @@ dotenv.config();
       type: 'postgres',
       url: process.env.DATABASE_URL,
       synchronize: false,
+      autoLoadEntities: true,
     }),
     UserModule,
     AuthModule,
