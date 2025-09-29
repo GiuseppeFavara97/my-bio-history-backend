@@ -59,7 +59,6 @@ export class UserService {
             user.patient = patient;
         }
 
-
         const savedUser = await this.userRepository.save(user);
 
         if (savedUser.patient) {
@@ -70,13 +69,9 @@ export class UserService {
         }
 
         return savedUser;
-
-
     }
 
-    /**
-     * Genera uno username univoco basato su nome e cognome
-     */
+    //Genera uno username univoco basato su nome e cognome
     async generateUserName(user: UserDto): Promise<string> {
         const base = `${user.firstName.toLowerCase()}.${user.lastName.toLowerCase()}`;
         let suffix = 0;
@@ -90,12 +85,8 @@ export class UserService {
         } while (true);
         return username;
     }
-    /**
-     * Genera il codice fiscale italiano secondo le regole ufficiali.
-     * @param dto Dati utente (nome, cognome, data e luogo di nascita, sesso)
-     * @returns Codice fiscale generato
-     */
-    generateTaxCode(dto: UserDto): string {
+  
+    async generateTaxCode(dto: UserDto): Promise<{ taxCode: string; verification: string }> {
         const { firstName, lastName, birthday, birthdayPlace, sex } = dto;
         const clean = (s: string) => s.toUpperCase().replace(/[^A-Z]/g, '');
         const extract = (s: string, chars: string) => clean(s).split('').filter(c => chars.includes(c)).join('');
@@ -120,37 +111,42 @@ export class UserService {
         const oddMap = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').reduce((acc, c, i) => (acc[c] = oddArr[i], acc), {} as Record<string, number>);
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         let sum = 0;
+
         // La posizione per il carattere di controllo è 1-based: dispari/pari secondo la normativa
         for (let i = 0; i < partial.length; i++) {
             const char = partial[i];
-            // i: 0-based. Se i%2==0 (pari, posizione 1,3,5...), uso evenMap; se i%2==1 (dispari, posizione 2,4,6...), uso oddMap
             sum += (i % 2 === 0) ? evenMap[char] : oddMap[char];
         }
         const controlChar = alphabet[sum % 26];
-        return (partial + controlChar).toUpperCase();
+        let taxCodeGenerated = partial + controlChar;
+        if (taxCodeGenerated.length !== 16) throw new Error(`Il formato del codice fiscale non  è corretto: ${taxCode}`);
+        
+        try {
+            const verify = await this.verificaCodiceFiscale(taxCodeGenerated);
+
+            if (verify.valid) {
+                return { taxCodeGenerated, verification: "Valido" };
+            } else {
+                return { taxCodeGenerated, verification: "Non valido" };
+            }
+        } catch (error: any) {
+            return { taxCodeGenerated, verification: `Verifica non disponibile: ${error.message}` };
+        }
     }
 
-
-    /**
-     * Verifica un codice fiscale tramite API OpenAPI.it
-     * @param cf Codice fiscale da verificare
-     * @returns Oggetto risposta API
-     */
     async verificaCodiceFiscale(cf: string): Promise<any> {
-        const apiUrl = process.env.OPENAPI_API_URL;
-        const apiKey = process.env.OPENAPI_API_KEY;
-        const token = process.env.OPENAPI_TOKEN;
+        const apiUrl = process.env.OPENAPI_API_URL_CHECK_TAXCODE_PRODUCTION || process.env.OPENAPI_API_URL_CHECK_TAXCODE_TEST;
+        const token = process.env.OPENAPI_TOKEN_CHECK_TAXCODE_PRODUCTION || process.env.OPENAPI_TOKEN_CHECK_TAXCODE_TEST;
 
+        if (!apiUrl) throw new Error("OPENAPI_API_URL non configurato nel .env");
+        if (!token) throw new Error("OPENAPI_TOKEN non configurato nel .env");
+        
         const headers: Record<string, string> = {
             "Content-Type": "application/json"
         };
 
         if (token) {
             headers["Authorization"] = `Bearer ${token}`;
-        } else if (apiKey) {
-            headers["x-api-key"] = apiKey;
-        } else {
-            throw new Error("API Key o Token non configurati nel .env");
         }
 
         const response = await fetch(apiUrl!, {
@@ -166,41 +162,30 @@ export class UserService {
         return data;
     }
 
-
-    /**
-     * Restituisce tutti gli utenti
-     */
+    //Restituisce tutti gli utenti
     async findAllUsers(): Promise<User[]> {
         return this.userRepository.find();
     }
 
-    /**
-     * Trova un utente per ID, lancia NotFound se non esiste
-     */
+    //Trova un utente per ID, lancia NotFound se non esiste
     async findUserById(id: number): Promise<User> {
         const user = await this.userRepository.findOne({ where: { id } });
         if (!user) throw new NotFoundException(`User with ID ${id} not found`);
         return user;
     }
 
-    /**
-     * Trova un utente per email
-     */
+    //Trova un utente per email
     async findUserByEmail(email: string): Promise<User | null> {
         return this.userRepository.findOne({ where: { email } });
     }
 
-    /**
-     * Aggiorna un utente e restituisce il nuovo oggetto
-     */
+    //Aggiorna un utente e restituisce il nuovo oggetto
     async updateUser(id: number, userDto: UserDto): Promise<User> {
         await this.userRepository.update(id, userDto);
         return this.findUserById(id);
     }
 
-    /**
-     * Soft delete di un utente e delle entità collegate
-     */
+    // Soft delete di un utente e delle entità collegate
     async softDeleteUser(id: number): Promise<User> {
         const user = await this.findUserById(id);
         await this.userRepository.update(id, { softDeleted: true });
@@ -212,24 +197,18 @@ export class UserService {
         return this.findUserById(id);
     }
 
-    /**
-     * Trova un utente per email (ignora password, per compatibilità)
-     */
+    //Trova un utente per email (ignora password, per compatibilità)
     async findOne(email: string, _password: string): Promise<User | undefined> {
         const user = await this.userRepository.findOne({ where: { email } });
         return user === null ? undefined : user;
     }
 
-    /**
-     * Aggiorna l'immagine profilo dell'utente
-     */
+    //Aggiorna l'immagine profilo dell'utente
     async updateProfileImage(id: number, imageUrl: string): Promise<void> {
         await this.userRepository.update({ id }, { profileImageUrl: imageUrl });
     }
 
-    /**
-     * Restituisce i dati dell'utente loggato
-     */
+    //Restituisce i dati dell'utente loggato
     async loggedUser(id: number): Promise<User | null> {
         return this.userRepository.findOne({ where: { id } });
     }

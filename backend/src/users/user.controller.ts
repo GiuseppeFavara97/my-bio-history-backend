@@ -17,19 +17,6 @@ class VerifyTaxCodeDto {
 export class UserController {
     constructor(private userService: UserService) { }
 
-    /**
-     * Verifica un codice fiscale tramite API esterna
-     * @param body Oggetto con campo taxCode
-     */
-    @Public()
-    @Post('verify-tax-code')
-    async verifyTaxCode(@Body() body: VerifyTaxCodeDto): Promise<any> {
-        if (!body.taxCode || typeof body.taxCode !== 'string') {
-            return { error: 'taxCode richiesto' };
-        }
-        return this.userService.verificaCodiceFiscale(body.taxCode);
-    }
-
     @Public()
     @Post('create')
     async createUser(@Body() userDto: UserDto): Promise<any> {
@@ -64,9 +51,9 @@ export class UserController {
     }
     @Public()
     @Post('taxCode')
-    async generateTaxCode(@Body() userDto: UserDto): Promise<string> {
-        const taxCode = await this.userService.generateTaxCode(userDto);
-        return taxCode;
+    async generateTaxCode(@Body() userDto: UserDto) {
+        return await this.userService.generateTaxCode(userDto);
+        
     }
 
     @UseGuards(AuthGuard)
