@@ -5,24 +5,15 @@ import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import { UserRole } from './enum/userRole.enum';
 import { ItalyCities } from 'src/common/utils/italyCities';
-import { MedicalRecordService } from '../medicalRecords/medical.service';
 import { DoctorService } from '../doctors/doctor.service';
 import { PatientService } from '../patients/patient.service';
 import * as bcrypt from 'bcrypt';
-import { stringify } from 'querystring';
-import { checkPrime } from 'crypto';
 import { Patient } from '../patients/patient.entity';
 import { Doctor } from '../doctors/doctor.entity';
-import { Delete } from '@nestjs/common';
-
-
 
 @Injectable()
 export class UserService {
-    deleteUser(id: number): void | PromiseLike<void> {
-        throw new Error('Method not implemented.');
-    }
-    users: any;
+    // Metodo non implementato, da rimuovere o implementare se necessario
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
@@ -83,287 +74,163 @@ export class UserService {
 
     }
 
+    /**
+     * Genera uno username univoco basato su nome e cognome
+     */
     async generateUserName(user: UserDto): Promise<string> {
-        const name = user.firstName.toLowerCase();
-        const lastName = user.lastName.toLowerCase();
-        let a: number = 0;
-        let Genusername: string;
-
-        while (true) {
-            const formatNum = a.toString().padStart(4, '0');
-            Genusername = `${name}.${lastName}${formatNum}`;
-
-            const check = await this.userRepository.findOne({ where: { username: Genusername } });
-
-            if (!check) {
-                break;
-            }
-
-            a++;
-        }
-
-        return Genusername;
+        const base = `${user.firstName.toLowerCase()}.${user.lastName.toLowerCase()}`;
+        let suffix = 0;
+        let username: string;
+        do {
+            username = `${base}${suffix.toString().padStart(4, '0')}`;
+            // eslint-disable-next-line no-await-in-loop
+            const exists = await this.userRepository.findOne({ where: { username } });
+            if (!exists) break;
+            suffix++;
+        } while (true);
+        return username;
     }
+    /**
+     * Genera il codice fiscale italiano secondo le regole ufficiali.
+     * @param dto Dati utente (nome, cognome, data e luogo di nascita, sesso)
+     * @returns Codice fiscale generato
+     */
     generateTaxCode(dto: UserDto): string {
         const { firstName, lastName, birthday, birthdayPlace, sex } = dto;
-        const vowels = 'AEIOU';
-        const consonants = 'BCDFGHJKLMNPQRSTVWXYZ';
         const clean = (s: string) => s.toUpperCase().replace(/[^A-Z]/g, '');
-        const extractConsonants = (s: string) =>
-            clean(s)
-                .split('')
-                .filter((c) => consonants.includes(c))
-                .join('');
-        const extractVowels = (s: string) =>
-            clean(s)
-                .split('')
-                .filter((c) => vowels.includes(c))
-                .join('');
-
-        const codeLastName = (s: string) =>
-            (extractConsonants(s) + extractVowels(s) + 'XXX').substring(0, 3);
-
-        const codeFirstName = (s: string) => {
-            const cons = extractConsonants(s);
-            if (cons.length >= 4) return cons[0] + cons[2] + cons[3];
-            return (cons + extractVowels(s) + 'XXX').substring(0, 3);
+        const extract = (s: string, chars: string) => clean(s).split('').filter(c => chars.includes(c)).join('');
+        const codeName = (s: string, isFirst = false) => {
+            const cons = extract(s, 'BCDFGHJKLMNPQRSTVWXYZ');
+            if (isFirst && cons.length >= 4) return cons[0] + cons[2] + cons[3];
+            const vow = extract(s, 'AEIOU');
+            return (cons + vow + 'XXX').substring(0, 3);
         };
-
-        function estraiCodiceDaNome(firstName: string): string {
-            const vowels = ['A', 'E', 'I', 'O', 'U'];
-            const lecters = firstName.toUpperCase().replace(/[^A-Z]/g, '');
-            const consonants: string[] = [];
-            const vowelsfirstName: string[] = [];
-
-            for (const lecter of lecters) {
-                if (vowels.includes(lecter)) {
-                    vowelsfirstName.push(lecter);
-                } else {
-                    consonants.push(lecter);
-
-                }
-            }
-
-            let result = '';
-
-            if (consonants.length >= 4) {
-                // Se ci sono almeno 4 consonanti, prendi la 1a, 3a e 4a
-                result = consonants[0] + consonants[2] + consonants[3];
-            } else {
-                // Prendi tutte le consonanti disponibili
-                result = consonants.join('');
-                // Completa con vocali se non bastano
-                for (const vowel of vowelsfirstName) {
-                    if (result.length < 3) {
-                        result += vowel;
-                    }
-                }
-                // Se ancora meno di 3 lettere, aggiungi X
-                while (result.length < 3) {
-                    result += 'X';
-                }
-            }
-
-            return result;
-        }
-
-        function extractDataCode(
-            birthday: string | Date, // formato: "YYYY-MM-DD"
-            sex: 'M' | 'F'
-        ): string {
-            const monthCode: { [key: number]: string } = {
-                1: 'A',
-                2: 'B',
-                3: 'C',
-                4: 'D',
-                5: 'E',
-                6: 'H',
-                7: 'L',
-                8: 'M',
-                9: 'P',
-                10: 'R',
-                11: 'S',
-                12: 'T',
-            };
-
-            const dateObj = birthday instanceof Date ? birthday : new Date(birthday);
-            const year = dateObj.getFullYear().toString().slice(-2); // ultime due cifre
-            const month = monthCode[dateObj.getMonth() + 1];
-            let day = dateObj.getDate();
-
-            if (sex === 'F') {
-                day += 40;
-            }
-
-            const dayCode = day.toString().padStart(2, '0');
-
-            return `${year}${month}${dayCode}`;
-        };
-
-        const calculateControlChar = (code: string) => {
-            const evenMap: Record<string, number> = {
-                '0': 0,
-                '1': 1,
-                '2': 2,
-                '3': 3,
-                '4': 4,
-                '5': 5,
-                '6': 6,
-                '7': 7,
-                '8': 8,
-                '9': 9,
-                A: 0,
-                B: 1,
-                C: 2,
-                D: 3,
-                E: 4,
-                F: 5,
-                G: 6,
-                H: 7,
-                I: 8,
-                J: 9,
-                K: 10,
-                L: 11,
-                M: 12,
-                N: 13,
-                O: 14,
-                P: 15,
-                Q: 16,
-                R: 17,
-                S: 18,
-                T: 19,
-                U: 20,
-                V: 21,
-                W: 22,
-                X: 23,
-                Y: 24,
-                Z: 25,
-            };
-
-            const oddMap: Record<string, number> = {
-                '0': 1,
-                '1': 0,
-                '2': 5,
-                '3': 7,
-                '4': 9,
-                '5': 13,
-                '6': 15,
-                '7': 17,
-                '8': 19,
-                '9': 21,
-                A: 1,
-                B: 0,
-                C: 5,
-                D: 7,
-                E: 9,
-                F: 13,
-                G: 15,
-                H: 17,
-                I: 19,
-                J: 21,
-                K: 2,
-                L: 4,
-                M: 18,
-                N: 20,
-                O: 11,
-                P: 3,
-                Q: 6,
-                R: 8,
-                S: 12,
-                T: 14,
-                U: 16,
-                V: 10,
-                W: 22,
-                X: 25,
-                Y: 24,
-                Z: 23,
-            };
-
-            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            let sum = 0;
-
-            for (let i = 0; i < code.length; i++) {
-                const char = code[i];
-                sum += i % 2 === 0 ? oddMap[char] : evenMap[char];
-            }
-
-            return alphabet[sum % 26];
-
-        }
-
+        const monthCode = ['A','B','C','D','E','H','L','M','P','R','S','T'];
+        const dateObj = birthday instanceof Date ? birthday : new Date(birthday);
+        const year = dateObj.getFullYear().toString().slice(-2);
+        const month = monthCode[dateObj.getMonth()];
+        let day = dateObj.getDate();
+        if (sex === 'F') day += 40;
+        const dayCode = day.toString().padStart(2, '0');
         const catastalCode = ItalyCities.catastalCode(birthdayPlace);
-
-
-        if (!catastalCode) {
-            throw new NotFoundException(`Codice catastale non trovato per il comune: ${birthdayPlace}`);
+        if (!catastalCode) throw new NotFoundException(`Codice catastale non trovato per il comune: ${birthdayPlace}`);
+        const partial = codeName(lastName) + codeName(firstName, true) + year + month + dayCode + catastalCode;
+        const evenMap = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').reduce((acc, c, i) => (acc[c] = i, acc), {} as Record<string, number>);
+        const oddArr = [1,0,5,7,9,13,15,17,19,21,1,0,5,7,9,13,15,17,19,21,2,4,18,20,11,3,6,8,12,14,16,10,22,25,24,23];
+        const oddMap = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').reduce((acc, c, i) => (acc[c] = oddArr[i], acc), {} as Record<string, number>);
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let sum = 0;
+        // La posizione per il carattere di controllo è 1-based: dispari/pari secondo la normativa
+        for (let i = 0; i < partial.length; i++) {
+            const char = partial[i];
+            // i: 0-based. Se i%2==0 (pari, posizione 1,3,5...), uso evenMap; se i%2==1 (dispari, posizione 2,4,6...), uso oddMap
+            sum += (i % 2 === 0) ? evenMap[char] : oddMap[char];
         }
-
-        return (
-            codeLastName(lastName) +
-            codeFirstName(firstName) +
-            extractDataCode(birthday, sex) +
-            catastalCode +
-            calculateControlChar(
-                codeLastName(lastName) +
-                codeFirstName(firstName) +
-                extractDataCode(birthday, sex) +
-                catastalCode
-            )
-        );
+        const controlChar = alphabet[sum % 26];
+        return (partial + controlChar).toUpperCase();
     }
 
 
+    /**
+     * Verifica un codice fiscale tramite API OpenAPI.it
+     * @param cf Codice fiscale da verificare
+     * @returns Oggetto risposta API
+     */
+    async verificaCodiceFiscale(cf: string): Promise<any> {
+        const apiUrl = process.env.OPENAPI_API_URL;
+        const apiKey = process.env.OPENAPI_API_KEY;
+        const token = process.env.OPENAPI_TOKEN;
+
+        const headers: Record<string, string> = {
+            "Content-Type": "application/json"
+        };
+
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        } else if (apiKey) {
+            headers["x-api-key"] = apiKey;
+        } else {
+            throw new Error("API Key o Token non configurati nel .env");
+        }
+
+        const response = await fetch(apiUrl!, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ taxCode: cf })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "Errore durante la verifica CF");
+        }
+        return data;
+    }
+
+
+    /**
+     * Restituisce tutti gli utenti
+     */
     async findAllUsers(): Promise<User[]> {
         return this.userRepository.find();
     }
 
+    /**
+     * Trova un utente per ID, lancia NotFound se non esiste
+     */
     async findUserById(id: number): Promise<User> {
         const user = await this.userRepository.findOne({ where: { id } });
-        if (!user) {
-            throw new NotFoundException(`User with ID ${id} not found`);
-        }
+        if (!user) throw new NotFoundException(`User with ID ${id} not found`);
         return user;
     }
 
-    async findUsersByEmail(email: string): Promise<User | null> {
+    /**
+     * Trova un utente per email
+     */
+    async findUserByEmail(email: string): Promise<User | null> {
         return this.userRepository.findOne({ where: { email } });
     }
 
+    /**
+     * Aggiorna un utente e restituisce il nuovo oggetto
+     */
     async updateUser(id: number, userDto: UserDto): Promise<User> {
         await this.userRepository.update(id, userDto);
         return this.findUserById(id);
     }
 
+    /**
+     * Soft delete di un utente e delle entità collegate
+     */
     async softDeleteUser(id: number): Promise<User> {
         const user = await this.findUserById(id);
-        if (!user) {
-            throw new NotFoundException(`User with ID ${id} not found`);
-        } else {
-            await this.userRepository.update(id, { softDeleted: true });
-            if (user.role === UserRole.DOCTOR) {
-                await this.doctorRepository.update({ user: { id: user.id } }, { deleted: true });
-            } else if (user.role === UserRole.PATIENT) {
-                await this.patientRepository.update({ user: { id: user.id } }, { deleted: true });
-            }
-
-            return this.findUserById(id); // Return the user object after marking it as deleted
+        await this.userRepository.update(id, { softDeleted: true });
+        if (user.role === UserRole.DOCTOR) {
+            await this.doctorRepository.update({ user: { id: user.id } }, { deleted: true });
+        } else if (user.role === UserRole.PATIENT) {
+            await this.patientRepository.update({ user: { id: user.id } }, { deleted: true });
         }
+        return this.findUserById(id);
     }
 
-    async findOne(email: string, password: string): Promise<User | undefined> {
-        // logica per trovare l'utente
+    /**
+     * Trova un utente per email (ignora password, per compatibilità)
+     */
+    async findOne(email: string, _password: string): Promise<User | undefined> {
         const user = await this.userRepository.findOne({ where: { email } });
         return user === null ? undefined : user;
     }
 
-    async updateProfileImage(id: number, imageUrl: string) {
-        return this.userRepository.update({ id }, { profileImageUrl: imageUrl });
+    /**
+     * Aggiorna l'immagine profilo dell'utente
+     */
+    async updateProfileImage(id: number, imageUrl: string): Promise<void> {
+        await this.userRepository.update({ id }, { profileImageUrl: imageUrl });
     }
 
-    async loggedUser(id: number) {
-        const userData = await this.userRepository.findOne (
-            {where : {id}}
-        )
-        return userData
+    /**
+     * Restituisce i dati dell'utente loggato
+     */
+    async loggedUser(id: number): Promise<User | null> {
+        return this.userRepository.findOne({ where: { id } });
     }
 }
