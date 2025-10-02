@@ -28,7 +28,7 @@ export class UserService {
 
     async createUser(userDto: UserDto): Promise<User> {
         const hashedPassword = await bcrypt.hash(userDto.password, 10);
-
+        const taxCodeResult = await this.generateTaxCode(userDto);
         const user = this.userRepository.create({
             password: hashedPassword,
             email: userDto.email,
@@ -40,9 +40,8 @@ export class UserService {
             sex: userDto.sex,
             phoneNumber: userDto.phoneNumber,
             role: userDto.role,
-            taxCode: this.generateTaxCode(userDto),
+            taxCode: taxCodeResult.taxCode,
             username: await this.generateUserName(userDto)
-
         });
 
         if (userDto.role === UserRole.DOCTOR && userDto.doctor) {
@@ -118,19 +117,18 @@ export class UserService {
             sum += (i % 2 === 0) ? evenMap[char] : oddMap[char];
         }
         const controlChar = alphabet[sum % 26];
-        let taxCodeGenerated = partial + controlChar;
-        if (taxCodeGenerated.length !== 16) throw new Error(`Il formato del codice fiscale non  è corretto: ${taxCode}`);
+    let taxCodeGenerated = partial + controlChar;
+    if (taxCodeGenerated.length !== 16) throw new Error(`Il formato del codice fiscale non  è corretto: ${taxCodeGenerated}`);
         
         try {
             const verify = await this.verificaCodiceFiscale(taxCodeGenerated);
-
             if (verify.valid) {
-                return { taxCodeGenerated, verification: "Valido" };
+                return { taxCode: taxCodeGenerated, verification: "Valido" };
             } else {
-                return { taxCodeGenerated, verification: "Non valido" };
+                return { taxCode: taxCodeGenerated, verification: "Non valido" };
             }
         } catch (error: any) {
-            return { taxCodeGenerated, verification: `Verifica non disponibile: ${error.message}` };
+            return { taxCode: taxCodeGenerated, verification: `Verifica non disponibile: ${error.message}` };
         }
     }
 
