@@ -1,14 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UploadDocumentService } from './uploadDocument.service';
+import { MulterModule } from '@nestjs/platform-express';
 import { UploadDocumentController } from './uploadDocument.controller';
+import { UploadDocumentService } from './uploadDocument.service';
 import { UploadDocument } from './uploadDocument.entity';
-import { Patient } from 'src/patients/patient.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UploadDocument, Patient])],
-    providers: [UploadDocumentService],
+    imports: [
+        TypeOrmModule.forFeature([UploadDocument]),
+        MulterModule.register({
+            dest: './uploads/documents',
+        }),
+    ],
     controllers: [UploadDocumentController],
-    exports: [TypeOrmModule]
+    providers: [UploadDocumentService],
+    exports: [UploadDocumentService],
 })
-export class UploadDocumentModule { }
+export class UploadDocumentModule {}
