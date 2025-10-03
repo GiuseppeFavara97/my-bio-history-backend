@@ -13,6 +13,7 @@ import {
   BadRequestException,
   SetMetadata,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -20,11 +21,13 @@ import { extname } from 'path';
 import { UploadDocumentService } from './uploadDocument.service';
 import { UploadDocument } from './uploadDocument.entity';
 import { UploadDocumentDto } from './dto/uploadDocument.dto';
+import { AuthGuard } from '../auth/auth.guard'; // <-- USA IL TUO GUARD
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
 @Controller('uploadDocuments')
+@UseGuards(AuthGuard) // <-- PROTEGGE TUTTO IL CONTROLLER
 export class UploadDocumentController {
   constructor(private readonly uploadDocumentService: UploadDocumentService) {}
 
@@ -80,6 +83,7 @@ export class UploadDocumentController {
     return this.uploadDocumentService.uploadDocument(uploadDocumentDto, file.originalname);
   }
 
+  @Public()
   @Get('search')
   async findDocumentsByName(@Query('name') name: string): Promise<UploadDocument[]> {
     if (!name || name.trim() === '') {
@@ -88,6 +92,7 @@ export class UploadDocumentController {
     return this.uploadDocumentService.findDocumentsByName(name);
   }
 
+  @Public()
   @Get('latest')
   async findLatestDocuments(@Query('limit') limitParam?: string): Promise<UploadDocument[]> {
     const limit = parseInt(limitParam || '5', 10);
@@ -121,6 +126,7 @@ export class UploadDocumentController {
     return this.uploadDocumentService.updateDocument(id, uploadDocumentDto);
   }
 
+  // DELETE ORA PROTETTO - RICHIEDE TOKEN JWT
   @Delete(':id')
   async deleteDocument(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.uploadDocumentService.deleteDocument(id);

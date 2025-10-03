@@ -1,4 +1,3 @@
-
 import {
   CanActivate,
   ExecutionContext,
@@ -7,20 +6,21 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY, ROLES_KEY } from './auth.decorator';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
+import { IS_PUBLIC_KEY, ROLES_KEY } from './auth.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private jwtService: JwtService,
-    private reflector: Reflector,
-    private configService: ConfigService,
-  ) { }
+    private readonly jwtService: JwtService,
+    private readonly reflector: Reflector,
+    private readonly configService: ConfigService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Verifica se la rotta è pubblica
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -29,24 +29,29 @@ export class AuthGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const token = this.extractToken(request);
-    if (!token) throw new UnauthorizedException('Token non trovato');
+
+    if (!token) {
+      throw new UnauthorizedException('Token non trovato');
+    }
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get<string>('JWT_SECRET'), //usa lo stesso secret
+        secret: this.configService.get<string>('JWT_SECRET'),
       });
       request.user = payload;
-    } catch {
+    } catch (error) {
       throw new UnauthorizedException('Token non valido');
     }
 
-    //controllo ruoli
+    // Verifica ruoli se richiesti
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
-    if (requiredRoles && requiredRoles.length > 0) {
-      if (!request.user || !requiredRoles.includes(request.user.role)) {
+
+    if (requiredRoles?.length) {
+      const userRole = request.user?.role;
+      if (!userRole || !requiredRoles.includes(userRole)) {
         throw new ForbiddenException('Accesso negato: ruolo non autorizzato');
       }
     }
@@ -55,12 +60,15 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractToken(request: Request): string | undefined {
+    // Priorità al token nel cookie
     const cookieToken = (request as any).cookies?.auth_token;
     if (cookieToken) return cookieToken;
 
-    const auth = request.headers.authorization;
-    if (!auth) return undefined;
-    const [type, token] = auth.split(' ');
+    // Fallback al token nell'header Authorization
+    const authHeader = request.headers.authorization;
+    if (!authHeader) return undefined;
+
+    const [type, token] = authHeader.split(' ');
     return type === 'Bearer' ? token : undefined;
   }
 }
