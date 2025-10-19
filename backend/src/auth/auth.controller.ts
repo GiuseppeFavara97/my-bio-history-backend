@@ -12,6 +12,7 @@ import {
   UploadedFile,
   Req,
   Res,
+  Put,
 } from '@nestjs/common';
 import { Public } from './auth.decorator';
 import { AuthGuard } from './auth.guard';
@@ -89,9 +90,19 @@ export class AuthController {
     const { password, ...userSafe } = user;
     return userSafe;
   }
+  
   @UseGuards(AuthGuard)
   @Get('userID')
   userID(@Req() req) {
     return { id: req.user.sub, email: req.user.email, role: req.user.role }
   }
+  @Put('update-profile')
+  async updateProfile(@Req() req, @Body() body: any) {
+    const userId = req.user?.sub;
+    const updatedUser = await this.userService.updateUser(userId, body);
+    if (!updatedUser) {
+      throw new NotFoundException('Utente non trovato');
+    }
+
+}
 }
