@@ -8,6 +8,11 @@ import { Roles } from 'src/auth/auth.decorator';
 import { UserRole } from './enum/userRole.enum';
 import { User } from './user.entity';
 
+
+class VerifyTaxCodeDto {
+    taxCode: string;
+}
+
 @Controller('users')
 export class UserController {
     constructor(private userService: UserService) { }
@@ -44,11 +49,11 @@ export class UserController {
     async deleteUser(@Param('id') id: number): Promise<User> {
         return this.userService.softDeleteUser(id);
     }
-
-    @Post('generateTaxCode')
-    async generateTaxCode(@Body() userDto: UserDto): Promise<string> {
-        const taxCode = await this.userService.generateTaxCode(userDto);
-        return taxCode;
+    @Public()
+    @Post('taxCode')
+    async generateTaxCode(@Body() userDto: UserDto) {
+        return await this.userService.generateTaxCode(userDto);
+        
     }
 
     @UseGuards(AuthGuard)

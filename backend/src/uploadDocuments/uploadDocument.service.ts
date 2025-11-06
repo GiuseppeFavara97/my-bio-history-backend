@@ -1,67 +1,100 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UploadDocument } from './uploadDocument.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UploadDocument } from './uploadDocument.entity';
 import { UploadDocumentDto } from './dto/uploadDocument.dto';
-import { Patient } from 'src/patients/patient.entity';
+import * as fs from 'fs';
+import { promisify } from 'util';
+
+const unlinkAsync = promisify(fs.unlink);
 
 @Injectable()
 export class UploadDocumentService {
-    constructor(
-        @InjectRepository(UploadDocument)
-        private documentRepository: Repository<UploadDocument>,
-        @InjectRepository(Patient)
-        private patientRepository: Repository<Patient>,
-    ) { }
-    async uploadDocument(uploadDocumentDto: UploadDocumentDto): Promise<UploadDocument> {
-        const patient = await this.patientRepository.findOne({
-            where: { id: uploadDocumentDto.patientId },
-            relations: ["medicalRecord"]
-        });
+  constructor(
+    @InjectRepository(UploadDocument)
+    private documentRepository: Repository<UploadDocument>,
+  ) {}
 
-        if (!patient) {
-            throw new NotFoundException(`Patient with ID ${uploadDocumentDto.patientId} not found`);
-        }
-        const document = this.documentRepository.create({
-            name: uploadDocumentDto.name,
-            type: uploadDocumentDto.type,
-            size: uploadDocumentDto.size,
-            url: uploadDocumentDto.url,
-            patient: { id: patient.id },
-            medicalRecord: { id: patient.medicalRecord.id }
+  async uploadDocument(uploadDocumentDto: UploadDocumentDto, originalName: string): Promise<UploadDocument> {
+    const document = this.documentRepository.create({
+      ...uploadDocumentDto,
+      originalName,
+    });
+    return await this.documentRepository.save(document);
+  }
 
-        });
-        this.documentRepository.save(document);
-        return document;
+  async findAllDocuments(): Promise<UploadDocument[]> {
+    return await this.documentRepository.find({
+      where: { softDeleted: false },
+      relations: ['patient'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async findDocumentsByPatient(patientId: number): Promise<UploadDocument[]> {
+    return await this.documentRepository.find({
+      where: { patientId, softDeleted: false },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async findDocumentById(id: number): Promise<UploadDocument> {
+    const document = await this.documentRepository.findOne({
+      where: { id, softDeleted: false },
+      relations: ['patient'],
+    });
+
+    if (!document) {
+      throw new NotFoundException(`Documento con ID ${id} non trovato`);
     }
 
-    async findAllDocuments(): Promise<UploadDocument[]> {
-        return this.documentRepository.find();
+    return document;
+  }
+
+  async updateDocument(
+    id: number,
+    uploadDocumentDto: Partial<UploadDocumentDto>,
+  ): Promise<UploadDocument> {
+    const document = await this.findDocumentById(id);
+    Object.assign(document, uploadDocumentDto);
+    return await this.documentRepository.save(document);
+  }
+
+  async deleteDocument(id: number): Promise<void> {
+    const document = await this.findDocumentById(id);
+
+    try {
+      const filePath = `.${document.url}`;
+      if (fs.existsSync(filePath)) {
+        await unlinkAsync(filePath);
+      }
+    } catch (error) {
+      console.error("Errore nell'eliminazione del file:", error);
     }
 
-    async findDocumentById(id: number): Promise<UploadDocument> {
-        const document = await this.documentRepository.findOne({ where: { id } });
-        if (!document) {
-            throw new NotFoundException(`Document with ID ${id} not found`);
-        }
-        return document;
-    }
+    await this.documentRepository.remove(document);
+  }
 
-    async updateDocument(id: number, uploadDocumentDto: UploadDocumentDto): Promise<UploadDocument> {
-        await this.documentRepository.update(id, uploadDocumentDto);
-        return this.findDocumentById(id);
-    }
+  async softDeleteDocument(id: number): Promise<UploadDocument> {
+    const document = await this.findDocumentById(id);
+    document.softDeleted = true;
+    return await this.documentRepository.save(document);
+  }
 
-    async softDeleteDocument(id: number): Promise<UploadDocument> {
-        const document = await this.findDocumentById(id);
-        document.softDeleted = true;
-        return this.documentRepository.save(document);
-    }
+  async findLatestDocuments(limit: number): Promise<UploadDocument[]> {
+    return await this.documentRepository.find({
+      where: { softDeleted: false },
+      order: { createdAt: 'DESC' },
+      take: limit,
+    });
+  }
 
-    async deleteDocument(id: number): Promise<void> {
-        const result = await this.documentRepository.delete(id);
-        if (result.affected === 0) {
-            throw new NotFoundException(`Document with ID ${id} not found`);
-        }
-    }
+  async findDocumentsByName(name: string): Promise<UploadDocument[]> {
+    return await this.documentRepository
+      .createQueryBuilder('doc')
+      .where('doc.softDeleted = :deleted', { deleted: false })
+      .andWhere('doc.originalName ILIKE :search', { search: `%${name}%` })
+      .orderBy('doc.createdAt', 'DESC')
+      .getMany();
+  }
 }

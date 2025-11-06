@@ -1,37 +1,39 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { MedicalRecord } from 'src/medicalRecords/medical.entity';
-import { Patient } from 'src/patients/patient.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Patient } from '../patients/patient.entity';
 
 @Entity('uploadDocuments')
 export class UploadDocument {
-
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ nullable: true })
+    @Column()
     name: string;
 
     @Column({ nullable: true })
+    originalName: string;
+
+    @Column()
     type: string;
 
-    @Column({ nullable: true })
+    @Column()
     size: number;
 
-    @Column({ nullable: true })
+    @Column()
     url: string;
 
-    @Column({ default: false })
+    @Column({ name: 'patient_id' })
+    patientId: number;
+
+    @ManyToOne(() => Patient, { nullable: true })
+    @JoinColumn({ name: 'patient_id' })
+    patient?: Patient;
+
+    @Column({ name: 'createdAt' })
+    createdAt: Date;
+
+    @Column({ name: 'softDeleted', default: false })
     softDeleted: boolean;
 
-    @Column({ nullable: true })
-    @CreateDateColumn()
-    createdAt: Date
-
-    @ManyToOne(() => Patient, (patient) => patient.uploadDocuments)
-    @JoinColumn({ name: 'patient_id' })
-    patient: Patient;
-
-    @ManyToOne(() => MedicalRecord, (medicalRecord) => medicalRecord.uploadDocuments)
-    @JoinColumn({ name: 'medicalRecord_id' })
-    medicalRecord: MedicalRecord;
+    @Column({ name: 'medicalRecord_id', nullable: true })
+    medicalRecordId?: number;
 }
