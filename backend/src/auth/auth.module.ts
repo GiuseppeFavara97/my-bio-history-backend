@@ -4,16 +4,19 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../users/user.module';
-import { APP_GUARD, Reflector } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 import { PassportModule } from '@nestjs/passport';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/users/user.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forFeature([User]),
     UserModule,
-    PassportModule, // 👈 necessario per usare Passport
+    PassportModule,
+    ConfigModule,
     JwtModule.registerAsync({
       global: true,
       imports: [ConfigModule],
@@ -27,11 +30,12 @@ import { PassportModule } from '@nestjs/passport';
   controllers: [AuthController],
   providers: [
     AuthService,
+    EmailService, 
     {
       provide: APP_GUARD,
-      useClass: AuthGuard, // 👈 il tuo guard personalizzato (funziona se lo hai scritto correttamente)
+      useClass: AuthGuard,
     },
   ],
   exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

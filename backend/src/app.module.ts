@@ -15,22 +15,28 @@ import { MedicalRecordModule } from './medicalRecords/medical.module';
 import { PatientModule } from './patients/patient.module';
 import { VaccineModule } from './vaccines/vaccine.module';
 import { UploadDocumentModule } from './uploadDocuments/uploadDocument.module';
+import { ConfigModule } from '@nestjs/config';   // 👈 AGGIUNTO
 
 dotenv.config();
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: false,
-      
     }),
+
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
     }),
+
     UserModule,
     AuthModule,
     DoctorModule,
@@ -45,4 +51,4 @@ dotenv.config();
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
