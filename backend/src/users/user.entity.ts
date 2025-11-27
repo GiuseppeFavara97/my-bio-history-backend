@@ -12,6 +12,12 @@ export class User {
     @Column({ unique: true, nullable: true })
     username: string;
 
+    @Column({ nullable: true })
+    resetOtp: string;
+
+    @Column({ type: 'timestamp', nullable: true })
+    resetOtpExpires: Date;
+
     @Column({ unique: true, nullable: true })
     taxCode: string;
 
