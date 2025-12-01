@@ -43,7 +43,7 @@ export class UserService {
       throw new Error('Method not implemented.');
     }
     // -----------------------------------------------------
-    // 🔐 RESET PASSWORD DOPO OTP
+    // RESET PASSWORD DOPO OTP
     // -----------------------------------------------------
     findUserById(userId: any) {
       throw new Error('Method not implemented.');
@@ -60,7 +60,7 @@ export class UserService {
     ) {}
 
     // -----------------------------------------------------
-    // 🚀 GENERAZIONE OTP + INVIO EMAIL
+    //  GENERAZIONE OTP + INVIO EMAIL
     // -----------------------------------------------------
     async generateOtpForEmail(email: string): Promise<string> {
         const user = await this.userRepository.findOne({ where: { email } });
@@ -94,7 +94,7 @@ export class UserService {
     }
 
     // -----------------------------------------------------
-    // 🔐 RESET PASSWORD DOPO OTP
+    //  RESET PASSWORD DOPO OTP
     // -----------------------------------------------------
     async resetPassword(email: string, otp: string, newPassword: string): Promise<string> {
         const user = await this.userRepository.findOne({ where: { email } });
@@ -120,8 +120,6 @@ export class UserService {
         return "Password aggiornata con successo";
     }
 
-    // -----------------------------------------------------
-    // ... tutto il resto del tuo UserService rimane uguale
-    // -----------------------------------------------------
+  
 
 }

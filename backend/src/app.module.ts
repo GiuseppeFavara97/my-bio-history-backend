@@ -15,7 +15,7 @@ import { MedicalRecordModule } from './medicalRecords/medical.module';
 import { PatientModule } from './patients/patient.module';
 import { VaccineModule } from './vaccines/vaccine.module';
 import { UploadDocumentModule } from './uploadDocuments/uploadDocument.module';
-import { ConfigModule } from '@nestjs/config';   // 👈 AGGIUNTO
+import { ConfigModule } from '@nestjs/config';   //  AGGIUNTO
 
 dotenv.config();
 
