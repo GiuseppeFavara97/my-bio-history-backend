@@ -18,19 +18,28 @@ export class AuthService {
     private emailService: EmailService,
   ) {}
 
-  // ---------------- LOGIN ----------------
-  async signIn(email: string, password: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
-    if (!user) throw new NotFoundException('Email non trovata');
+  // -------------------------------------------------------
+  // LOGIN (email O telefono)
+  // -------------------------------------------------------
+  async signIn(identifier: string, password: string) {
+    // ⬇️ CERCA UTENTE PER EMAIL O TELEFONO
+    const user = await this.userRepository.findOne({
+      where: [{ email: identifier }, { phoneNumber: identifier }],
+    });
 
+    if (!user) throw new NotFoundException('Utente non trovato');
+
+    // ⬇️ CONFRONTA PASSWORD HASHATA CON BCRYPT
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) throw new UnauthorizedException('Password errata');
 
-    const access_token = 'FAKE_TOKEN'; // sostituire con JWT reale
+    const access_token = 'FAKE_TOKEN'; // TODO: sostituire con JWT reale
     return { access_token, user };
   }
 
-  // ---------------- RICHIESTA OTP ----------------
+  // -------------------------------------------------------
+  // INVIO OTP PER RESET PASSWORD (email O telefono)
+  // -------------------------------------------------------
   async requestPasswordReset(contact: string) {
     const user = await this.userRepository.findOne({
       where: [{ email: contact }, { phoneNumber: contact }],
@@ -40,7 +49,7 @@ export class AuthService {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     user.resetOtp = otp;
-    user.resetOtpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minuti
+    user.resetOtpExpires = new Date(Date.now() + 10 * 60 * 1000); // validità 10 min
     await this.userRepository.save(user);
 
     try {
@@ -53,7 +62,9 @@ export class AuthService {
     return { message: '📩 Codice OTP inviato.' };
   }
 
-  // ---------------- VERIFICA OTP ----------------
+  // -------------------------------------------------------
+  // VERIFICA OTP
+  // -------------------------------------------------------
   async verifyOtp(contact: string, otp: string) {
     const user = await this.userRepository.findOne({
       where: [{ email: contact }, { phoneNumber: contact }],
@@ -62,13 +73,17 @@ export class AuthService {
     if (!user) throw new NotFoundException('Utente non trovato');
     if (!user.resetOtp || !user.resetOtpExpires)
       throw new BadRequestException('Nessun OTP richiesto.');
-    if (user.resetOtp !== otp) throw new UnauthorizedException('OTP non corretto.');
-    if (user.resetOtpExpires < new Date()) throw new UnauthorizedException('OTP scaduto.');
+    if (user.resetOtp !== otp)
+      throw new UnauthorizedException('OTP non corretto.');
+    if (user.resetOtpExpires < new Date())
+      throw new UnauthorizedException('OTP scaduto.');
 
-    return { message: '✅ OTP verificato', userId: user.id };
+    return { message: 'OTP verificato', userId: user.id };
   }
 
-  // ---------------- RESET PASSWORD ----------------
+  // -------------------------------------------------------
+  // RESET PASSWORD (email O telefono)
+  // -------------------------------------------------------
   async resetPassword(contact: string, newPassword: string) {
     const user = await this.userRepository.findOne({
       where: [{ email: contact }, { phoneNumber: contact }],
@@ -76,13 +91,16 @@ export class AuthService {
 
     if (!user) throw new NotFoundException('Utente non trovato');
 
+    // ⬇️ HASH SICURO
     const hashed = await bcrypt.hash(newPassword, 10);
     user.password = hashed;
+
+    // ⬇️ RIMOZIONE OTP
     user.resetOtp = '';
-    user.resetOtpExpires = null as unknown as Date;
+    user.resetOtpExpires = null as any;
 
     await this.userRepository.save(user);
 
-    return { message: '✅ Password aggiornata con successo.' };
+    return { message: 'Password aggiornata con successo.' };
   }
 }

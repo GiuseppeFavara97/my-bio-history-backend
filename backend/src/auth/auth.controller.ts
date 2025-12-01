@@ -8,23 +8,23 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   // ----------------------------
-  // LOGIN
+  // LOGIN (email o telefono)
   // ----------------------------
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async signIn(
-    @Body() body: { email: string; password: string },
+    @Body() body: { identifier: string; password: string },
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { access_token, user } = await this.authService.signIn(body.email, body.password);
+    const { access_token, user } = await this.authService.signIn(body.identifier, body.password);
 
     res.cookie('auth_token', access_token, {
       httpOnly: true,
-      secure: false, // imposta a true in produzione con HTTPS
+      secure: false,
       sameSite: 'lax',
       path: '/',
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 giorni
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
     return { user };
@@ -46,8 +46,7 @@ export class AuthController {
   @Public()
   @Post('verify-otp')
   async verifyOtp(@Body() body: { contact: string; otp: string }) {
-    const result = await this.authService.verifyOtp(body.contact, body.otp);
-    return { message: '✅ OTP verificato', userId: result.userId };
+    return await this.authService.verifyOtp(body.contact, body.otp);
   }
 
   // ----------------------------
@@ -56,7 +55,6 @@ export class AuthController {
   @Public()
   @Post('reset-password')
   async resetPassword(@Body() body: { contact: string; newPassword: string }) {
-    const result = await this.authService.resetPassword(body.contact, body.newPassword);
-    return { message: '✅ Password aggiornata con successo.' };
+    return await this.authService.resetPassword(body.contact, body.newPassword);
   }
 }
