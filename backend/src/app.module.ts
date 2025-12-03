@@ -5,6 +5,8 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
+
+import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './users/user.module';
 import { DoctorModule } from './doctors/doctor.module';
@@ -15,15 +17,13 @@ import { MedicalRecordModule } from './medicalRecords/medical.module';
 import { PatientModule } from './patients/patient.module';
 import { VaccineModule } from './vaccines/vaccine.module';
 import { UploadDocumentModule } from './uploadDocuments/uploadDocument.module';
-import { ConfigModule } from '@nestjs/config';   //  AGGIUNTO
+import { ContactModule } from './contact/contanct.module';
 
 dotenv.config();
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
 
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -37,8 +37,9 @@ dotenv.config();
       serveRoot: '/uploads',
     }),
 
-    UserModule,
+    // ✅ Moduli applicativi
     AuthModule,
+    UserModule,
     DoctorModule,
     DiagnosisModule,
     CareModule,
@@ -46,7 +47,8 @@ dotenv.config();
     MedicalRecordModule,
     PatientModule,
     VaccineModule,
-    UploadDocumentModule
+    UploadDocumentModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],
